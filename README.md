@@ -104,8 +104,14 @@ window.PSYQUEST_BACKEND_CONFIG = {
    - `/api/index.php?action=health`
 2. Check DB credentials in `api/config.php`
 3. Make sure Apache + MySQL are running in WAMP
-4. Hard reload browser (service-worker cache)
-5. Ensure URL path matches project folder (`/psyquest/` etc.)
+4. Ensure URL path matches project folder (`/Symptomi/Psyquest/` etc.)
+5. Force refresh cached PWA files:
+   - Open DevTools -> Application -> Service Workers -> **Unregister**
+   - Application -> Clear storage -> **Clear site data**
+   - Reload with `Ctrl + F5`
+6. Verify loaded JS is the new WAMP build:
+   - open `http://localhost/Symptomi/Psyquest/app.js`
+   - search for `WAMP MySQL` in the file
 
 ## Optional: Firebase/Netlify compatibility
 
