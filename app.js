@@ -309,6 +309,7 @@
     notes: [],
     localAvatar: "",
     joined: false,
+    lastRenderedQrLink: "",
     unsubscribers: [],
     debriefIntervalId: null,
     roundIntervalId: null,
@@ -1479,7 +1480,8 @@
     if (state.role === "therapist") {
       ui.sessionIdDisplay.textContent = session.sessionId || state.sessionId || "-";
       ui.joinLinkInput.value = session.shortLink || ui.joinLinkInput.value;
-      if (!ui.qrCodeContainer.querySelector("img") && session.shortLink) {
+      const hasQrNode = Boolean(ui.qrCodeContainer.querySelector("img,canvas,svg,table"));
+      if ((!hasQrNode || state.lastRenderedQrLink !== session.shortLink) && session.shortLink) {
         drawQrCode(session.shortLink);
       }
     }
@@ -2087,19 +2089,47 @@
   }
 
   function drawQrCode(value) {
+    state.lastRenderedQrLink = String(value || "");
     ui.qrCodeContainer.innerHTML = "";
-    if (!window.QRCode) {
-      ui.qrCodeContainer.textContent = "QRCode.js nicht geladen.";
+    if (window.QRCode) {
+      // eslint-disable-next-line no-new
+      new QRCode(ui.qrCodeContainer, {
+        text: value,
+        width: 210,
+        height: 210,
+        colorDark: "#111827",
+        colorLight: "#ffffff"
+      });
       return;
     }
-    // eslint-disable-next-line no-new
-    new QRCode(ui.qrCodeContainer, {
-      text: value,
-      width: 210,
-      height: 210,
-      colorDark: "#111827",
-      colorLight: "#ffffff"
-    });
+
+    // Fallback if QRCode.js CDN is blocked: use a generated image service.
+    const image = document.createElement("img");
+    image.alt = "PsyQuest Session QR";
+    image.width = 210;
+    image.height = 210;
+    image.loading = "lazy";
+    image.src = `https://api.qrserver.com/v1/create-qr-code/?size=210x210&data=${encodeURIComponent(
+      String(value || "")
+    )}`;
+
+    const hint = document.createElement("p");
+    hint.className = "small text-body-secondary mt-2 mb-0 text-center";
+    hint.textContent = "QR-Fallback aktiv. Falls leer: Link manuell teilen.";
+
+    const link = document.createElement("a");
+    link.href = String(value || "#");
+    link.textContent = String(value || "");
+    link.className = "small d-block mt-1 text-break text-center";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+
+    image.onerror = () => {
+      image.remove();
+      hint.textContent = "QR konnte nicht gerendert werden. Bitte Kurzlink kopieren.";
+    };
+
+    ui.qrCodeContainer.append(image, hint, link);
   }
 
   async function copyJoinLink() {
