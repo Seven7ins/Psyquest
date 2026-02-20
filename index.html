@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg border-bottom bg-body-tertiary">
+    <nav id="appNavbar" class="navbar navbar-expand-lg border-bottom bg-body-tertiary">
       <div class="container">
         <span class="navbar-brand fw-bold">PsyQuest</span>
         <div class="d-flex align-items-center gap-2">
@@ -35,7 +35,7 @@
     <main class="container py-3 py-md-4">
       <div id="globalAlertArea" aria-live="polite"></div>
 
-      <section class="mb-3">
+      <section id="introSection" class="mb-3">
         <div class="card shadow-sm border-0 bg-primary-subtle">
           <div class="card-body">
             <h1 class="h4 mb-2">PsyQuest - "Es ist nur ein Spiel, aber mit echten Skills"</h1>
@@ -194,6 +194,9 @@
                   <div class="col-sm-4">
                     Gesamtpunkte: <span id="totalPointsDisplay" class="fw-semibold">0</span>
                   </div>
+                </div>
+                <div class="small mt-2">
+                  Runden-Timer: <span id="roundTimerDisplay" class="fw-semibold">01:00</span>
                 </div>
 
                 <div id="memeCertificateArea" class="mt-3"></div>
@@ -416,7 +419,8 @@
 
                 <div class="mt-3 small">
                   Score: <span id="playerScoreValue" class="fw-semibold">0</span> |
-                  Team-Level: <span id="playerTeamLevelValue" class="fw-semibold">1</span>
+                  Team-Level: <span id="playerTeamLevelValue" class="fw-semibold">1</span> |
+                  Runden-Timer: <span id="playerRoundTimerDisplay" class="fw-semibold">01:00</span>
                 </div>
                 <div id="playerBadgesList" class="mt-2"></div>
               </div>
