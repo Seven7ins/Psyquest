@@ -1,12 +1,13 @@
-const CACHE_NAME = "psyquest-cache-v2";
+const CACHE_NAME = "psyquest-cache-v3";
 const APP_SHELL = [
-  "/",
-  "/index.html",
-  "/styles.css",
-  "/app.js",
-  "/manifest.webmanifest",
-  "/assets/icons/icon-192.svg",
-  "/assets/icons/icon-512.svg"
+  "./",
+  "./index.html",
+  "./styles.css",
+  "./app.js",
+  "./backend-config.js",
+  "./manifest.webmanifest",
+  "./assets/icons/icon-192.svg",
+  "./assets/icons/icon-512.svg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -39,10 +40,20 @@ self.addEventListener("fetch", (event) => {
 
   const requestUrl = new URL(request.url);
   const isSameOrigin = requestUrl.origin === self.location.origin;
-  const isRuntimeConfigFile = requestUrl.pathname === "/firebase-config.js";
-  const skipCachePaths = new Set(["/firebase-config.js", "/service-worker.js"]);
+  const pathname = requestUrl.pathname;
+  const isRuntimeConfigFile = pathname.endsWith("/firebase-config.js");
+  const isApiRequest = pathname.includes("/api/");
+  const shouldSkipCache =
+    pathname.endsWith("/firebase-config.js") ||
+    pathname.endsWith("/backend-config.js") ||
+    pathname.endsWith("/service-worker.js");
 
   if (isSameOrigin) {
+    if (isApiRequest) {
+      event.respondWith(fetch(request, { cache: "no-store" }));
+      return;
+    }
+
     if (isRuntimeConfigFile) {
       event.respondWith(
         fetch(request, { cache: "no-store" }).catch(() =>
@@ -68,18 +79,20 @@ self.addEventListener("fetch", (event) => {
         return fetch(request)
           .then((response) => {
             const responseClone = response.clone();
-            if (!skipCachePaths.has(requestUrl.pathname)) {
+            if (!shouldSkipCache) {
               caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
             }
             return response;
           })
-          .catch(() => caches.match("/index.html"));
+          .catch(() => caches.match("./index.html"));
       })
     );
     return;
   }
 
   event.respondWith(
-    fetch(request).catch(() => caches.match(request).then((cached) => cached || caches.match("/index.html")))
+    fetch(request).catch(() =>
+      caches.match(request).then((cached) => cached || caches.match("./index.html"))
+    )
   );
 });

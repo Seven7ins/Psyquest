@@ -580,6 +580,226 @@
     }
   }
 
+  class WampBackend {
+    constructor(options) {
+      const config = options || {};
+      this.apiBaseUrl = String(config.apiBaseUrl || "./api/index.php");
+      this.pollIntervalMs = Math.max(700, Number(config.pollIntervalMs) || 1500);
+      this.uidKey = "psyquest_wamp_uid";
+      this.watchPacks = new Map();
+    }
+
+    async initAuth() {
+      let uid = localStorage.getItem(this.uidKey);
+      if (!uid) {
+        uid = `wamp-${Math.random().toString(36).slice(2, 11)}`;
+        localStorage.setItem(this.uidKey, uid);
+      }
+      return { uid, isAnonymous: true };
+    }
+
+    async healthCheck() {
+      await this.get("health");
+    }
+
+    async getSession(sessionId) {
+      const data = await this.get("session_get", { sessionId });
+      return data.session || null;
+    }
+
+    async createSession(sessionId, payload) {
+      await this.post("session_create", { sessionId, payload });
+    }
+
+    async updateSession(sessionId, patch) {
+      await this.post("session_update", { sessionId, patch });
+    }
+
+    async upsertPlayer(sessionId, uid, playerPatch) {
+      await this.post("player_upsert", { sessionId, uid, playerPatch });
+    }
+
+    async addChatMessage(sessionId, message) {
+      await this.post("chat_add", { sessionId, message });
+    }
+
+    async addNote(sessionId, note) {
+      await this.post("note_add", { sessionId, note });
+    }
+
+    async applyContribution(sessionId, uid, avatarName, contribution) {
+      await this.post("contribution_apply", { sessionId, uid, avatarName, contribution });
+    }
+
+    watchSession(sessionId, callback) {
+      return this.watchKind("session", sessionId, callback);
+    }
+
+    watchPlayers(sessionId, callback) {
+      return this.watchKind("players", sessionId, callback);
+    }
+
+    watchChat(sessionId, callback) {
+      return this.watchKind("chat", sessionId, callback);
+    }
+
+    watchNotes(sessionId, callback) {
+      return this.watchKind("notes", sessionId, callback);
+    }
+
+    watchKind(kind, sessionId, callback) {
+      const pack = this.ensurePack(sessionId);
+      pack.callbacks[kind].add(callback);
+
+      if (pack.initialized) {
+        callback(cloneJsonData(pack.cache[kind]));
+      }
+
+      this.startPolling(sessionId);
+
+      return () => {
+        pack.callbacks[kind].delete(callback);
+        this.stopPollingIfIdle(sessionId);
+      };
+    }
+
+    ensurePack(sessionId) {
+      if (!this.watchPacks.has(sessionId)) {
+        this.watchPacks.set(sessionId, {
+          callbacks: {
+            session: new Set(),
+            players: new Set(),
+            chat: new Set(),
+            notes: new Set()
+          },
+          cache: {
+            session: null,
+            players: [],
+            chat: [],
+            notes: []
+          },
+          hashes: {
+            session: "",
+            players: "",
+            chat: "",
+            notes: ""
+          },
+          initialized: false,
+          inFlight: false,
+          timerId: null
+        });
+      }
+      return this.watchPacks.get(sessionId);
+    }
+
+    hasCallbacks(pack) {
+      return (
+        pack.callbacks.session.size > 0 ||
+        pack.callbacks.players.size > 0 ||
+        pack.callbacks.chat.size > 0 ||
+        pack.callbacks.notes.size > 0
+      );
+    }
+
+    startPolling(sessionId) {
+      const pack = this.ensurePack(sessionId);
+      if (pack.timerId) {
+        return;
+      }
+
+      const poll = async () => {
+        if (pack.inFlight) {
+          return;
+        }
+        pack.inFlight = true;
+        try {
+          await this.pollBundle(sessionId);
+        } catch (error) {
+          console.warn("WAMP poll failed:", error);
+        } finally {
+          pack.inFlight = false;
+        }
+      };
+
+      poll();
+      pack.timerId = window.setInterval(poll, this.pollIntervalMs);
+    }
+
+    stopPollingIfIdle(sessionId) {
+      const pack = this.watchPacks.get(sessionId);
+      if (!pack) {
+        return;
+      }
+      if (this.hasCallbacks(pack)) {
+        return;
+      }
+      if (pack.timerId) {
+        clearInterval(pack.timerId);
+      }
+      this.watchPacks.delete(sessionId);
+    }
+
+    async pollBundle(sessionId) {
+      const pack = this.ensurePack(sessionId);
+      const data = await this.get("bundle_get", { sessionId });
+      const next = {
+        session: data.session || null,
+        players: Array.isArray(data.players) ? data.players : [],
+        chat: Array.isArray(data.chat) ? data.chat : [],
+        notes: Array.isArray(data.notes) ? data.notes : []
+      };
+
+      ["session", "players", "chat", "notes"].forEach((kind) => {
+        const hash = stableHash(next[kind]);
+        if (!pack.initialized || hash !== pack.hashes[kind]) {
+          pack.hashes[kind] = hash;
+          pack.cache[kind] = next[kind];
+          pack.callbacks[kind].forEach((callback) => callback(cloneJsonData(next[kind])));
+        }
+      });
+
+      pack.initialized = true;
+    }
+
+    async get(action, params) {
+      return this.request("GET", action, params, null);
+    }
+
+    async post(action, body) {
+      return this.request("POST", action, null, body);
+    }
+
+    async request(method, action, params, body) {
+      const url = buildApiUrl(this.apiBaseUrl, action, params);
+      const options = {
+        method,
+        headers: {
+          Accept: "application/json"
+        }
+      };
+
+      if (body) {
+        options.headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(body);
+      }
+
+      const response = await fetch(url, options);
+      const rawText = await response.text();
+      let payload = {};
+      try {
+        payload = rawText ? JSON.parse(rawText) : {};
+      } catch (_error) {
+        throw new Error(`Ungueltige API-Antwort bei ${action}.`);
+      }
+
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.error || `API-Fehler bei ${action}.`);
+      }
+
+      return payload.data || {};
+    }
+  }
+
   class FirebaseBackend {
     constructor(config) {
       this.config = config;
@@ -1012,24 +1232,49 @@
   }
 
   async function initBackend() {
-    const rawConfig = window.PSYQUEST_FIREBASE_CONFIG || {};
-    const config = normalizeFirebaseConfig(rawConfig);
-    const configValidation = validateFirebaseConfig(config);
-    const hasFirebaseSdk = Boolean(window.firebase);
+    const backendConfig = normalizeBackendConfig(window.PSYQUEST_BACKEND_CONFIG || {});
+    const reasons = [];
 
-    if (configValidation.valid && hasFirebaseSdk) {
+    if (backendConfig.mode === "wamp" || backendConfig.mode === "auto") {
       try {
-        state.backend = new FirebaseBackend(config);
-        state.user = await state.backend.initAuth();
-        state.backendMode = "firebase";
-        setConnectionBadge("Firebase Live", "success");
+        const wampBackend = new WampBackend(backendConfig);
+        const user = await wampBackend.initAuth();
+        await wampBackend.healthCheck();
+        state.backend = wampBackend;
+        state.user = user;
+        state.backendMode = "wamp";
+        setConnectionBadge("WAMP MySQL", "success");
         return;
       } catch (error) {
         console.error(error);
-        showAlert(
-          "Firebase konnte nicht initialisiert werden. Die App startet im lokalen Demo-Modus.",
-          "warning"
-        );
+        reasons.push(`WAMP API nicht erreichbar: ${error.message || String(error)}`);
+      }
+    }
+
+    if (backendConfig.mode === "firebase" || backendConfig.mode === "auto") {
+      const rawConfig = window.PSYQUEST_FIREBASE_CONFIG || {};
+      const config = normalizeFirebaseConfig(rawConfig);
+      const configValidation = validateFirebaseConfig(config);
+      const hasFirebaseSdk = Boolean(window.firebase);
+
+      if (configValidation.valid && hasFirebaseSdk) {
+        try {
+          state.backend = new FirebaseBackend(config);
+          state.user = await state.backend.initAuth();
+          state.backendMode = "firebase";
+          setConnectionBadge("Firebase Live", "success");
+          return;
+        } catch (error) {
+          console.error(error);
+          reasons.push(`Firebase init fehlgeschlagen: ${error.message || String(error)}`);
+        }
+      } else {
+        if (!configValidation.valid) {
+          reasons.push(`Firebase Config unvollstaendig: ${configValidation.missing.join(", ")}`);
+        }
+        if (!hasFirebaseSdk) {
+          reasons.push("Firebase SDK nicht geladen");
+        }
       }
     }
 
@@ -1038,29 +1283,11 @@
     state.backendMode = "demo";
     setConnectionBadge("Demo Local", "secondary");
 
-    const reasons = [];
-    const meta = window.PSYQUEST_FIREBASE_CONFIG_META || {};
-    if (!configValidation.valid) {
-      reasons.push(`fehlende/ungueltige Keys: ${configValidation.missing.join(", ")}`);
-    }
-    if (!hasFirebaseSdk) {
-      reasons.push("Firebase SDK nicht geladen (Netzwerk/Adblock pruefen)");
-    }
-    if (Array.isArray(meta.missingFirebaseKeys) && meta.missingFirebaseKeys.length > 0) {
-      reasons.push(`Build-Meta fehlt: ${meta.missingFirebaseKeys.join(", ")}`);
-    }
-    if (meta.jsonEnvParseError) {
-      reasons.push("FIREBASE_CONFIG_JSON konnte nicht geparst werden");
-    }
-
     const detail =
       reasons.length > 0
-        ? ` ${reasons.join(" | ")}`
-        : " firebase-config.js enthaelt noch Platzhalter oder ist nicht erreichbar.";
-    showAlert(
-      `Demo-Modus aktiv.${detail} Pruefe /firebase-config.js in der deployten URL.`,
-      "warning"
-    );
+        ? reasons.join(" | ")
+        : "Kein Backend verfuegbar. Fuer WAMP pruefe /api/index.php?action=health.";
+    showAlert(`Demo-Modus aktiv. ${detail}`, "warning");
   }
 
   async function boot() {
@@ -1855,6 +2082,32 @@
       .catch((error) => console.warn("Service worker registration failed:", error));
   }
 
+  function normalizeBackendConfig(config) {
+    const fallback = {
+      mode: "wamp",
+      apiBaseUrl: "./api/index.php",
+      pollIntervalMs: 1500
+    };
+    if (!config || typeof config !== "object") {
+      return fallback;
+    }
+
+    const normalized = { ...fallback };
+    if (typeof config.mode === "string") {
+      const mode = config.mode.trim().toLowerCase();
+      if (["wamp", "firebase", "demo", "auto"].includes(mode)) {
+        normalized.mode = mode;
+      }
+    }
+    if (typeof config.apiBaseUrl === "string" && config.apiBaseUrl.trim()) {
+      normalized.apiBaseUrl = config.apiBaseUrl.trim();
+    }
+    if (Number.isFinite(Number(config.pollIntervalMs))) {
+      normalized.pollIntervalMs = Math.max(700, Number(config.pollIntervalMs));
+    }
+    return normalized;
+  }
+
   function normalizeFirebaseConfig(config) {
     if (!config || typeof config !== "object") {
       return {};
@@ -1974,6 +2227,35 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
+  }
+
+  function stableHash(value) {
+    try {
+      return JSON.stringify(value);
+    } catch (_error) {
+      return String(value);
+    }
+  }
+
+  function cloneJsonData(value) {
+    try {
+      return JSON.parse(JSON.stringify(value));
+    } catch (_error) {
+      return value;
+    }
+  }
+
+  function buildApiUrl(baseUrl, action, params) {
+    const url = new URL(baseUrl, window.location.href);
+    url.searchParams.set("action", action);
+    if (params && typeof params === "object") {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          url.searchParams.set(key, String(value));
+        }
+      });
+    }
+    return url.toString();
   }
 
   document.addEventListener("DOMContentLoaded", () => {

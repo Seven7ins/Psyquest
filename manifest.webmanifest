@@ -2,20 +2,20 @@
   "name": "PsyQuest",
   "short_name": "PsyQuest",
   "description": "Multiplayer PWA fuer psychologische Gruppentherapie mit CBT/DBT-Spielmechaniken.",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f8fbff",
   "theme_color": "#3b82f6",
   "lang": "de",
   "icons": [
     {
-      "src": "/assets/icons/icon-192.svg",
+      "src": "./assets/icons/icon-192.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-512.svg",
+      "src": "./assets/icons/icon-512.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
