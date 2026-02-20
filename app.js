@@ -1012,11 +1012,12 @@
   }
 
   async function initBackend() {
-    const config = window.PSYQUEST_FIREBASE_CONFIG || {};
-    const hasFirebaseConfig = isValidFirebaseConfig(config);
+    const rawConfig = window.PSYQUEST_FIREBASE_CONFIG || {};
+    const config = normalizeFirebaseConfig(rawConfig);
+    const configValidation = validateFirebaseConfig(config);
     const hasFirebaseSdk = Boolean(window.firebase);
 
-    if (hasFirebaseConfig && hasFirebaseSdk) {
+    if (configValidation.valid && hasFirebaseSdk) {
       try {
         state.backend = new FirebaseBackend(config);
         state.user = await state.backend.initAuth();
@@ -1036,9 +1037,29 @@
     state.user = await state.backend.initAuth();
     state.backendMode = "demo";
     setConnectionBadge("Demo Local", "secondary");
+
+    const reasons = [];
+    const meta = window.PSYQUEST_FIREBASE_CONFIG_META || {};
+    if (!configValidation.valid) {
+      reasons.push(`fehlende/ungueltige Keys: ${configValidation.missing.join(", ")}`);
+    }
+    if (!hasFirebaseSdk) {
+      reasons.push("Firebase SDK nicht geladen (Netzwerk/Adblock pruefen)");
+    }
+    if (Array.isArray(meta.missingFirebaseKeys) && meta.missingFirebaseKeys.length > 0) {
+      reasons.push(`Build-Meta fehlt: ${meta.missingFirebaseKeys.join(", ")}`);
+    }
+    if (meta.jsonEnvParseError) {
+      reasons.push("FIREBASE_CONFIG_JSON konnte nicht geparst werden");
+    }
+
+    const detail =
+      reasons.length > 0
+        ? ` ${reasons.join(" | ")}`
+        : " firebase-config.js enthaelt noch Platzhalter oder ist nicht erreichbar.";
     showAlert(
-      "Demo-Modus aktiv. Fuer echtes Multiplayer bitte firebase-config.js ausfuellen.",
-      "info"
+      `Demo-Modus aktiv.${detail} Pruefe /firebase-config.js in der deployten URL.`,
+      "warning"
     );
   }
 
@@ -1834,18 +1855,55 @@
       .catch((error) => console.warn("Service worker registration failed:", error));
   }
 
-  function isValidFirebaseConfig(config) {
-    if (!config) {
-      return false;
+  function normalizeFirebaseConfig(config) {
+    if (!config || typeof config !== "object") {
+      return {};
     }
-    const required = ["apiKey", "authDomain", "projectId", "appId", "databaseURL"];
-    return required.every((key) => {
-      const value = config[key];
-      if (!value || typeof value !== "string") {
-        return false;
+    const normalized = { ...config };
+    if (typeof normalized.authDomain === "string") {
+      normalized.authDomain = normalized.authDomain
+        .trim()
+        .replace(/^https?:\/\//, "")
+        .replace(/\/+$/, "");
+    }
+    if (typeof normalized.databaseURL === "string") {
+      const trimmed = normalized.databaseURL.trim().replace(/\/+$/, "");
+      if (trimmed && !trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+        normalized.databaseURL = `https://${trimmed}`;
+      } else {
+        normalized.databaseURL = trimmed;
       }
-      return !value.startsWith("YOUR_");
+    }
+    ["apiKey", "projectId", "appId", "storageBucket", "messagingSenderId"].forEach((key) => {
+      if (typeof normalized[key] === "string") {
+        normalized[key] = normalized[key].trim();
+      }
     });
+    return normalized;
+  }
+
+  function validateFirebaseConfig(config) {
+    const required = ["apiKey", "authDomain", "projectId", "appId", "databaseURL"];
+    const missing = [];
+
+    required.forEach((key) => {
+      const value = config?.[key];
+      if (!value || typeof value !== "string" || value.startsWith("YOUR_")) {
+        missing.push(key);
+      }
+    });
+
+    if (config?.authDomain && /^https?:\/\//.test(config.authDomain)) {
+      missing.push("authDomain(format)");
+    }
+    if (config?.databaseURL && !/^https?:\/\//.test(config.databaseURL)) {
+      missing.push("databaseURL(format)");
+    }
+
+    return {
+      valid: missing.length === 0,
+      missing
+    };
   }
 
   function generateSessionId() {

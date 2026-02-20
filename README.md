@@ -107,7 +107,7 @@ Deploy steps:
 
 1. Push this repo to GitHub.
 2. In Netlify: **Add new site -> Import an existing project**.
-3. In Netlify Site settings, set these **Environment Variables**:
+3. In Netlify Site settings, set these **Environment Variables** (preferred names):
    - `FIREBASE_API_KEY`
    - `FIREBASE_AUTH_DOMAIN`
    - `FIREBASE_PROJECT_ID`
@@ -115,6 +115,11 @@ Deploy steps:
    - `FIREBASE_MESSAGING_SENDER_ID`
    - `FIREBASE_APP_ID`
    - `FIREBASE_DATABASE_URL`
+   - Optional alternative prefixes are also supported by the generator:
+     - `VITE_FIREBASE_*`
+     - `NEXT_PUBLIC_FIREBASE_*`
+   - Optional JSON alternative:
+     - `FIREBASE_CONFIG_JSON` with full Firebase web config JSON payload.
 4. Deploy site (or trigger a redeploy after env changes).
 5. Open your site URL:
    - Therapist: `https://your-site.netlify.app/`
@@ -125,6 +130,17 @@ Deploy steps:
 - Firebase Web config values are not secrets (they are client-side identifiers), but still keep admin keys/server keys out of frontend code.
 - This setup auto-generates `firebase-config.js` from Netlify env vars during build.
 - Make sure Firebase Authentication (anonymous), Firestore and RTDB rules allow your intended session flow.
+
+### Troubleshooting: still seeing "Demo-Modus aktiv"
+
+1. Open the deployed file directly:
+   - `https://your-site.netlify.app/firebase-config.js`
+2. Confirm it does **not** contain placeholders like `YOUR_API_KEY`.
+3. In Netlify deploy logs, check for generator output:
+   - `[psyquest] firebase-config.js generated from environment variables.`
+4. If env vars were changed, trigger a fresh redeploy.
+5. Hard-refresh browser / clear site data once (service-worker cache).
+6. Disable adblock/privacy extension briefly if Firebase SDK from `gstatic.com` is blocked.
 
 ### Optional local generation from environment
 
