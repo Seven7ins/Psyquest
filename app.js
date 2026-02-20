@@ -3,8 +3,6 @@
 
   const MAX_PLAYERS = 12;
   const MIN_RECOMMENDED_PLAYERS = 4;
-  const DEBRIEF_DURATION_MS = 3 * 60 * 1000;
-  const ROUND_DURATION_MS = 60 * 1000;
 
   const THEMES = [
     { value: "anxiety", label: "Angst / Anxiety" },
@@ -1083,8 +1081,8 @@
     ui.playerConsentCheckbox.checked = false;
     ui.playerDebriefCard.classList.add("d-none");
     ui.playerGameCard.classList.add("d-none");
-    ui.roundTimerDisplay.textContent = "01:00";
-    ui.playerRoundTimerDisplay.textContent = "01:00";
+    ui.roundTimerDisplay.textContent = "--:--";
+    ui.playerRoundTimerDisplay.textContent = "--:--";
   }
 
   function toggleRoleView() {
@@ -1666,38 +1664,10 @@
   }
 
   function renderRoundTimerState(session) {
-    if (!session || session.status !== "in_game" || !session.roundEndsAt) {
-      stopRoundTicker();
-      ui.roundTimerDisplay.textContent = "01:00";
-      ui.playerRoundTimerDisplay.textContent = "01:00";
-      return;
-    }
-    startRoundTicker(session.roundEndsAt, session.round);
-  }
-
-  function startRoundTicker(endTimestamp, roundNumber) {
     stopRoundTicker();
-    const tick = () => {
-      const remainingMs = Math.max(0, Number(endTimestamp) - Date.now());
-      const text = formatDuration(remainingMs);
-      ui.roundTimerDisplay.textContent = text;
-      ui.playerRoundTimerDisplay.textContent = text;
-
-      if (
-        remainingMs <= 0 &&
-        state.role === "therapist" &&
-        state.session &&
-        state.session.status === "in_game" &&
-        Number(state.session.round) === Number(roundNumber) &&
-        state.autoTimedOutRound !== roundNumber
-      ) {
-        state.autoTimedOutRound = roundNumber;
-        openDebriefRound();
-      }
-    };
-
-    tick();
-    state.roundIntervalId = window.setInterval(tick, 1000);
+    const label = session && session.status === "in_game" ? "Unbegrenzt" : "--:--";
+    ui.roundTimerDisplay.textContent = label;
+    ui.playerRoundTimerDisplay.textContent = label;
   }
 
   function stopRoundTicker() {
@@ -1729,24 +1699,8 @@
       ui.debriefQuestions.append(li);
     });
 
-    startDebriefTicker(session.debriefEndsAt);
-  }
-
-  function startDebriefTicker(endTimestamp) {
     stopDebriefTicker();
-    if (!endTimestamp) {
-      ui.debriefCountdown.textContent = "03:00";
-      return;
-    }
-    const tick = () => {
-      const remainingMs = Math.max(0, Number(endTimestamp) - Date.now());
-      ui.debriefCountdown.textContent = formatDuration(remainingMs);
-      if (remainingMs <= 0) {
-        stopDebriefTicker();
-      }
-    };
-    tick();
-    state.debriefIntervalId = window.setInterval(tick, 1000);
+    ui.debriefCountdown.textContent = "Unbegrenzt";
   }
 
   function stopDebriefTicker() {
@@ -1770,7 +1724,7 @@
       currentChallenge: challenge,
       meme: "",
       debriefEndsAt: null,
-      roundEndsAt: Date.now() + ROUND_DURATION_MS
+      roundEndsAt: null
     };
     await updateSessionWithFeedback(patch, "Escape Room Runde gestartet.");
   }
@@ -1790,7 +1744,7 @@
       currentChallenge: challenge,
       meme: "",
       debriefEndsAt: null,
-      roundEndsAt: Date.now() + ROUND_DURATION_MS
+      roundEndsAt: null
     };
     await updateSessionWithFeedback(patch, "Boss Fight gestartet.");
   }
@@ -1809,7 +1763,7 @@
       currentChallenge: challenge,
       meme: "",
       debriefEndsAt: null,
-      roundEndsAt: Date.now() + ROUND_DURATION_MS
+      roundEndsAt: null
     };
     await updateSessionWithFeedback(patch, "Friendly Competitive Runde gestartet.");
   }
@@ -1821,7 +1775,7 @@
     const questions = pickReflectionQuestions();
     const patch = {
       status: "debrief",
-      debriefEndsAt: Date.now() + DEBRIEF_DURATION_MS,
+      debriefEndsAt: null,
       roundEndsAt: null,
       debriefQuestions: questions
     };
