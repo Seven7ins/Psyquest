@@ -1,10 +1,9 @@
-const CACHE_NAME = "psyquest-cache-v1";
+const CACHE_NAME = "psyquest-cache-v2";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/styles.css",
   "/app.js",
-  "/firebase-config.js",
   "/manifest.webmanifest",
   "/assets/icons/icon-192.svg",
   "/assets/icons/icon-512.svg"
@@ -40,8 +39,27 @@ self.addEventListener("fetch", (event) => {
 
   const requestUrl = new URL(request.url);
   const isSameOrigin = requestUrl.origin === self.location.origin;
+  const isRuntimeConfigFile = requestUrl.pathname === "/firebase-config.js";
+  const skipCachePaths = new Set(["/firebase-config.js", "/service-worker.js"]);
 
   if (isSameOrigin) {
+    if (isRuntimeConfigFile) {
+      event.respondWith(
+        fetch(request, { cache: "no-store" }).catch(() =>
+          caches
+            .match(request)
+            .then(
+              (cached) =>
+                cached ||
+                new Response("window.PSYQUEST_FIREBASE_CONFIG = {};", {
+                  headers: { "Content-Type": "application/javascript" }
+                })
+            )
+        )
+      );
+      return;
+    }
+
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) {
@@ -50,7 +68,9 @@ self.addEventListener("fetch", (event) => {
         return fetch(request)
           .then((response) => {
             const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+            if (!skipCachePaths.has(requestUrl.pathname)) {
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+            }
             return response;
           })
           .catch(() => caches.match("/index.html"));

@@ -29,8 +29,12 @@ anonymous avatars, and cooperative therapeutic gameplay based on CBT/DBT.
 .
 ├── app.js
 ├── firebase-config.js
+├── firebase.json
 ├── index.html
 ├── manifest.webmanifest
+├── netlify.toml
+├── scripts
+│   └── generate-firebase-config.mjs
 ├── service-worker.js
 ├── styles.css
 └── assets
@@ -63,7 +67,14 @@ In Firebase Console:
 - Create **Realtime Database**.
 - Add a Web App to get config.
 
-### 2) Configure `firebase-config.js`
+### 2) Configure Firebase web config
+
+You have two options:
+
+- **Local/manual**: edit `firebase-config.js` directly.
+- **Netlify env-based (recommended)**: set env vars and let the build script generate `firebase-config.js`.
+
+Manual format:
 
 Replace placeholders:
 
@@ -85,18 +96,50 @@ window.PSYQUEST_FIREBASE_CONFIG = {
 - Add TTL/retention policy for old sessions if needed.
 - Avoid storing identifying personal data.
 
-## Firebase Hosting Deploy
+## Netlify Deploy (Recommended)
 
-1. Install Firebase CLI:
-   - `npm install -g firebase-tools`
-2. Login:
-   - `firebase login`
-3. Initialize hosting:
-   - `firebase init hosting`
-   - public directory: `.`
-   - configure as SPA: `Yes`
-4. Deploy:
-   - `firebase deploy`
+This repo is now configured for Netlify via `netlify.toml`:
+- SPA fallback redirect (`/* -> /index.html`) so session links like `?session=ABC123` work.
+- PWA headers for `service-worker.js` and `manifest.webmanifest`.
+- Build command: `node scripts/generate-firebase-config.mjs`.
+
+Deploy steps:
+
+1. Push this repo to GitHub.
+2. In Netlify: **Add new site -> Import an existing project**.
+3. In Netlify Site settings, set these **Environment Variables**:
+   - `FIREBASE_API_KEY`
+   - `FIREBASE_AUTH_DOMAIN`
+   - `FIREBASE_PROJECT_ID`
+   - `FIREBASE_STORAGE_BUCKET`
+   - `FIREBASE_MESSAGING_SENDER_ID`
+   - `FIREBASE_APP_ID`
+   - `FIREBASE_DATABASE_URL`
+4. Deploy site (or trigger a redeploy after env changes).
+5. Open your site URL:
+   - Therapist: `https://your-site.netlify.app/`
+   - Player join: `https://your-site.netlify.app/?session=ABC123`
+
+## Netlify + Firebase Notes
+
+- Firebase Web config values are not secrets (they are client-side identifiers), but still keep admin keys/server keys out of frontend code.
+- This setup auto-generates `firebase-config.js` from Netlify env vars during build.
+- Make sure Firebase Authentication (anonymous), Firestore and RTDB rules allow your intended session flow.
+
+### Optional local generation from environment
+
+If you want local env-driven config generation too:
+
+```bash
+FIREBASE_API_KEY=... \
+FIREBASE_AUTH_DOMAIN=... \
+FIREBASE_PROJECT_ID=... \
+FIREBASE_STORAGE_BUCKET=... \
+FIREBASE_MESSAGING_SENDER_ID=... \
+FIREBASE_APP_ID=... \
+FIREBASE_DATABASE_URL=... \
+node scripts/generate-firebase-config.mjs
+```
 
 ## Vercel Deploy
 
@@ -107,6 +150,10 @@ window.PSYQUEST_FIREBASE_CONFIG = {
 5. Deploy.
 
 Because this is a static PWA, it runs directly from static hosting.
+
+## Firebase Hosting Deploy (Optional)
+
+If you prefer Firebase Hosting, `firebase.json` is included and ready.
 
 ## Suggested Clinical Use Flow (45-60 min)
 
