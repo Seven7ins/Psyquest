@@ -1,167 +1,123 @@
-# PsyQuest PWA
+# PsyQuest PWA (WAMP + MySQL Edition)
 
 PsyQuest is a Progressive Web App for psychological group therapy sessions (4-12 participants, 14+).
-It is designed as a low-pressure multiplayer game: no accounts, no app-store installation, QR join,
-anonymous avatars, and cooperative therapeutic gameplay based on CBT/DBT.
+The current default setup is **self-hosted on WAMP + MySQL** (no Firebase required).
 
-## Features
+## Core Features
 
-- **Single QR join flow**: therapist creates one session, participants join instantly by scanning.
-- **Anonymous identity**: auto-generated avatar names (e.g. `Brave Lion`).
-- **Realtime multiplayer**:
-  - Firestore for sessions, players, therapist notes.
-  - Realtime Database for chat and live actions.
-  - Firebase Anonymous Auth for session participation.
-- **Game modes**
-  - Cooperative focus (escape room + boss fight).
-  - Friendly competitive modes (Empathy Duel, Skill Race, Perspective Battle).
-- **Therapeutic session flow**
-  - Team progress + boss HP bars.
-  - Badges/levels and end-of-round meme + certificate card.
-  - Automatic 3-minute debrief prompts after rounds.
-- **Anonymity mode** for social phobia: sticker-only chat.
-- **PWA support**: service worker + manifest for install/offline shell.
-- **Data privacy orientation (DSGVO-style)**: anonymized participant data, explicit consent toggle, anonymous therapist notes.
+- QR-based join with one session link (no account required)
+- Anonymous avatars (e.g. `Brave Lion`)
+- Cooperative + friendly competitive therapeutic rounds
+- Realtime sync via self-hosted PHP API + MySQL polling
+- Therapist moderation chat, sticker-only mode, notes, debrief timer
+- PWA support (install/offline shell)
 
 ## Project Structure
 
 ```text
 .
+├── api
+│   ├── config.php
+│   └── index.php
+├── db
+│   └── psyquest_wamp_schema.sql
 ├── app.js
-├── firebase-config.js
-├── firebase.json
+├── backend-config.js
 ├── index.html
 ├── manifest.webmanifest
-├── netlify.toml
-├── scripts
-│   └── generate-firebase-config.mjs
 ├── service-worker.js
 ├── styles.css
 └── assets
     └── icons
-        ├── icon-192.svg
-        └── icon-512.svg
 ```
 
-## Local Run (Quick Start)
+## WAMP Setup (Windows VPS / local WAMP)
 
-You can run this without Firebase credentials in **Demo Local mode**:
+### 1) Put project into WAMP web root
 
-1. Serve static files:
-   - Python: `python3 -m http.server 8080`
-2. Open:
-   - Therapist view: `http://localhost:8080/index.html`
-   - Player view example: `http://localhost:8080/index.html?session=ABC123`
-3. Open multiple tabs/devices to simulate participants.
+Example:
 
-When no valid Firebase config is set, the app automatically switches to Demo mode (localStorage + BroadcastChannel).
+`C:\wamp64\www\psyquest\`
 
-## Firebase Setup (Production Multiplayer)
+Then app URL will be:
 
-### 1) Create Firebase project
+`http://localhost/psyquest/`
 
-In Firebase Console:
-- Create project.
-- Enable **Authentication -> Anonymous**.
-- Create **Cloud Firestore** database.
-- Create **Realtime Database**.
-- Add a Web App to get config.
+### 2) Create database in MySQL
 
-### 2) Configure Firebase web config
+Use phpMyAdmin (or MySQL CLI):
 
-You have two options:
+- Create database `psyquest` with charset `utf8mb4`, collation `utf8mb4_unicode_ci`
+- Optionally import `db/psyquest_wamp_schema.sql`
 
-- **Local/manual**: edit `firebase-config.js` directly.
-- **Netlify env-based (recommended)**: set env vars and let the build script generate `firebase-config.js`.
+> Note: `api/index.php` also auto-creates required tables if DB exists and DB user has CREATE permissions.
 
-Manual format:
+### 3) Configure DB credentials
 
-Replace placeholders:
+Edit `api/config.php`:
+
+```php
+return [
+  "host" => "127.0.0.1",
+  "port" => 3306,
+  "database" => "psyquest",
+  "username" => "root",
+  "password" => "",
+  "charset" => "utf8mb4",
+];
+```
+
+### 4) Verify backend health
+
+Open:
+
+`http://localhost/psyquest/api/index.php?action=health`
+
+You should get JSON like:
+
+```json
+{"ok":true,"data":{"status":"ok","driver":"wamp-mysql","serverTime":...}}
+```
+
+### 5) Open app
+
+- Therapist: `http://localhost/psyquest/`
+- Player join example: `http://localhost/psyquest/?session=ABC123`
+
+If everything is correct, top badge shows **WAMP MySQL** (not Demo).
+
+## Realtime mode config
+
+`backend-config.js` controls runtime backend:
 
 ```js
-window.PSYQUEST_FIREBASE_CONFIG = {
-  apiKey: "...",
-  authDomain: "...",
-  projectId: "...",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "...",
-  databaseURL: "https://<project>-default-rtdb.firebaseio.com"
+window.PSYQUEST_BACKEND_CONFIG = {
+  mode: "wamp",               // wamp | firebase | demo | auto
+  apiBaseUrl: "./api/index.php",
+  pollIntervalMs: 1500
 };
 ```
 
-### 3) Firestore / RTDB security baseline (recommended)
+## Troubleshooting (still shows Demo mode)
 
-- Keep anonymous access restricted to session-scoped data.
-- Add TTL/retention policy for old sessions if needed.
-- Avoid storing identifying personal data.
+1. Check health endpoint:
+   - `/api/index.php?action=health`
+2. Check DB credentials in `api/config.php`
+3. Make sure Apache + MySQL are running in WAMP
+4. Hard reload browser (service-worker cache)
+5. Ensure URL path matches project folder (`/psyquest/` etc.)
 
-## Netlify Deploy (Recommended)
+## Optional: Firebase/Netlify compatibility
 
-This repo is now configured for Netlify via `netlify.toml`:
-- SPA fallback redirect (`/* -> /index.html`) so session links like `?session=ABC123` work.
-- PWA headers for `service-worker.js` and `manifest.webmanifest`.
-- Build command: `node scripts/generate-firebase-config.mjs`.
+Legacy Firebase/Netlify files are still present for optional cloud deployment, but WAMP is now the default runtime.
 
-Deploy steps:
+## Suggested Clinical Session Flow (45-60 min)
 
-1. Push this repo to GitHub.
-2. In Netlify: **Add new site -> Import an existing project**.
-3. In Netlify Site settings, set these **Environment Variables**:
-   - `FIREBASE_API_KEY`
-   - `FIREBASE_AUTH_DOMAIN`
-   - `FIREBASE_PROJECT_ID`
-   - `FIREBASE_STORAGE_BUCKET`
-   - `FIREBASE_MESSAGING_SENDER_ID`
-   - `FIREBASE_APP_ID`
-   - `FIREBASE_DATABASE_URL`
-4. Deploy site (or trigger a redeploy after env changes).
-5. Open your site URL:
-   - Therapist: `https://your-site.netlify.app/`
-   - Player join: `https://your-site.netlify.app/?session=ABC123`
-
-## Netlify + Firebase Notes
-
-- Firebase Web config values are not secrets (they are client-side identifiers), but still keep admin keys/server keys out of frontend code.
-- This setup auto-generates `firebase-config.js` from Netlify env vars during build.
-- Make sure Firebase Authentication (anonymous), Firestore and RTDB rules allow your intended session flow.
-
-### Optional local generation from environment
-
-If you want local env-driven config generation too:
-
-```bash
-FIREBASE_API_KEY=... \
-FIREBASE_AUTH_DOMAIN=... \
-FIREBASE_PROJECT_ID=... \
-FIREBASE_STORAGE_BUCKET=... \
-FIREBASE_MESSAGING_SENDER_ID=... \
-FIREBASE_APP_ID=... \
-FIREBASE_DATABASE_URL=... \
-node scripts/generate-firebase-config.mjs
-```
-
-## Vercel Deploy
-
-1. Import the repository in Vercel.
-2. Framework preset: `Other`.
-3. Build command: none.
-4. Output directory: root.
-5. Deploy.
-
-Because this is a static PWA, it runs directly from static hosting.
-
-## Firebase Hosting Deploy (Optional)
-
-If you prefer Firebase Hosting, `firebase.json` is included and ready.
-
-## Suggested Clinical Use Flow (45-60 min)
-
-- 15 min game round (escape room or boss fight)
-- 30 min moderated reflection/debrief
+- 15 min game round
+- 30 min reflection/debrief
 - 15 min second round and closure
 
-## Safety / Scope Note
+## Safety Note
 
-PsyQuest is a therapeutic support tool, not an emergency-care system.  
+PsyQuest is a therapeutic support tool, not an emergency-care system.
 Do not use as sole intervention in acute crisis contexts.
