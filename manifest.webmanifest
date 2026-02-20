@@ -2,7 +2,7 @@
   "name": "PsyQuest",
   "short_name": "PsyQuest",
   "description": "Multiplayer PWA fuer psychologische Gruppentherapie mit CBT/DBT-Spielmechaniken.",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fbff",
   "theme_color": "#3b82f6",

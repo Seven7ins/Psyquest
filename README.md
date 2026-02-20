@@ -29,8 +29,10 @@ anonymous avatars, and cooperative therapeutic gameplay based on CBT/DBT.
 .
 ├── app.js
 ├── firebase-config.js
+├── firebase.json
 ├── index.html
 ├── manifest.webmanifest
+├── netlify.toml
 ├── service-worker.js
 ├── styles.css
 └── assets
@@ -85,18 +87,29 @@ window.PSYQUEST_FIREBASE_CONFIG = {
 - Add TTL/retention policy for old sessions if needed.
 - Avoid storing identifying personal data.
 
-## Firebase Hosting Deploy
+## Netlify Deploy (Recommended)
 
-1. Install Firebase CLI:
-   - `npm install -g firebase-tools`
-2. Login:
-   - `firebase login`
-3. Initialize hosting:
-   - `firebase init hosting`
-   - public directory: `.`
-   - configure as SPA: `Yes`
-4. Deploy:
-   - `firebase deploy`
+This repo is now configured for Netlify via `netlify.toml`:
+- SPA fallback redirect (`/* -> /index.html`) so session links like `?session=ABC123` work.
+- PWA headers for `service-worker.js` and `manifest.webmanifest`.
+
+Deploy steps:
+
+1. Push this repo to GitHub.
+2. In Netlify: **Add new site -> Import an existing project**.
+3. Build settings:
+   - Build command: *(leave empty)*
+   - Publish directory: `.`
+4. Deploy site.
+5. Open your site URL:
+   - Therapist: `https://your-site.netlify.app/`
+   - Player join: `https://your-site.netlify.app/?session=ABC123`
+
+## Netlify + Firebase Notes
+
+- Keep Firebase credentials in `firebase-config.js` (client-safe public web config).
+- For stricter ops, you can generate this file during CI from Netlify env vars.
+- Make sure Firebase Authentication (anonymous), Firestore and RTDB rules allow your intended session flow.
 
 ## Vercel Deploy
 
@@ -107,6 +120,10 @@ window.PSYQUEST_FIREBASE_CONFIG = {
 5. Deploy.
 
 Because this is a static PWA, it runs directly from static hosting.
+
+## Firebase Hosting Deploy (Optional)
+
+If you prefer Firebase Hosting, `firebase.json` is included and ready.
 
 ## Suggested Clinical Use Flow (45-60 min)
 
