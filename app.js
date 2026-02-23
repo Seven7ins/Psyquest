@@ -44,6 +44,13 @@
     debrief: "Nachbesprechung",
     completed: "Abgeschlossen"
   };
+
+  const ANSWER_COLOR_CLASSES = [
+    "answer-option-blue",
+    "answer-option-green",
+    "answer-option-yellow",
+    "answer-option-red"
+  ];
   const QUEST_LIBRARY = [
     {
       id: "escape-anxiety-labyrinth",
@@ -1044,6 +1051,7 @@
       "playerStatusBadge",
       "playerBattleMode",
       "playerOpponentName",
+      "playerBossIcon",
       "challengeTitle",
       "challengeDescription",
       "challengeOptions",
@@ -1097,6 +1105,7 @@
     if (ui.playerGameCard) {
       ui.playerGameCard.classList.add("d-none");
     }
+    refreshSubmitButtonState();
   }
 
   function toggleRoleView() {
@@ -1119,6 +1128,7 @@
       ui.introSection.classList.toggle("d-none", !therapist);
     }
     document.body.classList.toggle("moderator-screen", moderator);
+    document.body.classList.toggle("player-screen", player);
   }
 
   function populateThemeSelect() {
@@ -1241,12 +1251,15 @@
     ui.playerResponseInput.addEventListener("input", () => {
       const value = ui.playerResponseInput.value.trim();
       if (!state.selectedOption || value === state.selectedOption) {
+        refreshSubmitButtonState();
         return;
       }
       state.selectedOption = "";
       ui.challengeOptions.querySelectorAll("button[data-option]").forEach((entry) => {
         entry.classList.remove("is-selected");
+        entry.setAttribute("aria-pressed", "false");
       });
+      refreshSubmitButtonState();
     });
 
     ui.submitContributionBtn.addEventListener("click", () => submitContribution({ actionType: "manual" }));
@@ -1260,8 +1273,11 @@
       state.selectedOption = selectedText;
       ui.playerResponseInput.value = selectedText;
       ui.challengeOptions.querySelectorAll("button[data-option]").forEach((entry) => {
-        entry.classList.toggle("is-selected", entry === button);
+        const selected = entry === button;
+        entry.classList.toggle("is-selected", selected);
+        entry.setAttribute("aria-pressed", selected ? "true" : "false");
       });
+      refreshSubmitButtonState();
     });
 
     window.addEventListener("beforeinstallprompt", (event) => {
@@ -1529,6 +1545,7 @@
       ui.playerOpponentName,
       session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss"
     );
+    setTextIfPresent(ui.playerBossIcon, session.mode === "competitive" ? "⚔️" : "👾");
     setTextIfPresent(
       ui.moderatorBossName,
       session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss"
@@ -1560,6 +1577,7 @@
     renderMemeOrCertificate();
     renderDebriefState();
     renderModeratorBoard();
+    refreshSubmitButtonState();
   }
 
   function renderChallenge(challenge) {
@@ -1569,6 +1587,7 @@
         "Sobald die Moderation die Runde startet, erscheint hier die Frage.";
       ui.challengeOptions.innerHTML = "";
       state.selectedOption = "";
+      refreshSubmitButtonState();
       return;
     }
 
@@ -1580,15 +1599,20 @@
     ui.challengeTitle.textContent = challenge.title || "Neue Runde";
     ui.challengeDescription.textContent = challenge.description || "";
     ui.challengeOptions.innerHTML = "";
-    availableOptions.forEach((optionText) => {
+    availableOptions.forEach((optionText, index) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "answer-option-btn";
       button.dataset.option = optionText;
       button.textContent = optionText;
-      button.classList.toggle("is-selected", optionText === state.selectedOption);
+      button.classList.add(ANSWER_COLOR_CLASSES[index % ANSWER_COLOR_CLASSES.length]);
+      const isSelected = optionText === state.selectedOption;
+      button.classList.toggle("is-selected", isSelected);
+      button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+      button.setAttribute("aria-label", `Antwort ${index + 1}: ${optionText}`);
       ui.challengeOptions.append(button);
     });
+    refreshSubmitButtonState();
   }
 
   function renderMemeOrCertificate() {
@@ -2033,6 +2057,7 @@
       ui.playerJoinCard.classList.add("d-none");
       ui.playerGameCard.classList.remove("d-none");
       ui.playerAvatarBadge.textContent = state.localAvatar;
+      refreshSubmitButtonState();
       showAlert(`Willkommen, ${state.localAvatar}.`, "success");
 
       await state.backend.addChatMessage(state.sessionId, {
@@ -2111,7 +2136,9 @@
       state.selectedOption = "";
       ui.challengeOptions.querySelectorAll("button[data-option]").forEach((entry) => {
         entry.classList.remove("is-selected");
+        entry.setAttribute("aria-pressed", "false");
       });
+      refreshSubmitButtonState();
       showAlert("Antwort gesendet.", isCorrect ? "success" : "info");
     } catch (error) {
       console.error(error);
@@ -2420,6 +2447,15 @@
       .trim()
       .toLowerCase()
       .replace(/\s+/g, " ");
+  }
+
+  function refreshSubmitButtonState() {
+    if (!ui.submitContributionBtn) {
+      return;
+    }
+    const hasAnswer = Boolean((state.selectedOption || ui.playerResponseInput?.value || "").trim());
+    const isInRound = Boolean(state.session && state.session.status === "in_game");
+    ui.submitContributionBtn.disabled = !(state.joined && isInRound && hasAnswer);
   }
 
   function setTextIfPresent(element, value) {
