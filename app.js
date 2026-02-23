@@ -1061,7 +1061,6 @@
       "playerActionButtons",
       "playerTeamProgressBar",
       "playerBossHpBar",
-      "playerBossImage",
       "playerScoreValue",
       "playerTeamLevelValue",
       "playerBadgesList",
@@ -1548,7 +1547,6 @@
     setProgressBar(ui.playerBossHpBar, bossHp, "bg-danger");
     setProgressBar(ui.moderatorBossHpBar, bossHp, "bg-danger");
     updateBossImage(ui.bossImage, bossHp);
-    updateBossImage(ui.playerBossImage, bossHp);
     updateBossImage(ui.moderatorBossImage, bossHp);
     setTextIfPresent(ui.roundDisplay, String(round));
     setTextIfPresent(ui.teamLevelDisplay, String(teamLevel));
@@ -1563,7 +1561,16 @@
       ui.playerOpponentName,
       session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss"
     );
-    setTextIfPresent(ui.playerBossIcon, session.mode === "competitive" ? "⚔️" : "👾");
+    if (ui.playerBossIcon) {
+      if (session.mode === "competitive") {
+        ui.playerBossIcon.textContent = "⚔️";
+        ui.playerBossIcon.classList.remove("boss-sprite-player");
+      } else {
+        ui.playerBossIcon.textContent = "";
+        ui.playerBossIcon.classList.add("boss-sprite-player");
+        ui.playerBossIcon.dataset.phase = bossPhaseFromHp(bossHp);
+      }
+    }
     setTextIfPresent(
       ui.moderatorBossName,
       session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss"
