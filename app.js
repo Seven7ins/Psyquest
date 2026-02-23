@@ -5,11 +5,11 @@
   const MIN_RECOMMENDED_PLAYERS = 4;
 
   const THEMES = [
-    { value: "anxiety", label: "Angst / Anxiety" },
-    { value: "depression", label: "Depression" },
-    { value: "social-phobia", label: "Soziale Phobie" },
-    { value: "stress", label: "Stressmanagement" },
-    { value: "cbt-dbt", label: "CBT / DBT Skills" }
+    { value: "anxiety", label: "Angst" },
+    { value: "depression", label: "Niedergeschlagenheit" },
+    { value: "social-phobia", label: "Soziale Unsicherheit" },
+    { value: "stress", label: "Stress" },
+    { value: "cbt-dbt", label: "Gedanken und Gefuehle ordnen" }
   ];
 
   const STICKERS = [
@@ -23,83 +23,69 @@
 
   const REFLECTION_QUESTIONS = [
     "Was hat dich heute stark gemacht?",
-    "Welcher Skill war fuer dich am hilfreichsten?",
+    "Welche Uebung hat dir heute am meisten geholfen?",
     "Was moechtest du im Alltag als naechsten Mini-Schritt ausprobieren?",
     "Wann hat dich die Gruppe besonders unterstuetzt?",
-    "Welche Selbstbotschaft ersetzt heute den Inner Critic?"
+    "Welcher gute Satz hilft dir gegen harte Selbstkritik?"
   ];
 
   const MEME_LINES = [
-    "Inner Critic geblockt. Teamkindness aktiviert.",
-    "Anxiety Monster hat auf lautlos gestellt.",
-    "Coping Combo x5: Reframe + Atem + Support.",
-    "Boss says: 'Ok wow, das war empathisch.'",
-    "Patch notes: Scham -20%, Mut +35%, Teamplay +40%."
+    "Team bleibt ruhig. Team bleibt klar.",
+    "Der Boss wird leiser. Ihr werdet staerker.",
+    "Ein guter Gedanke nach dem anderen.",
+    "Mut waechst mit jedem kleinen Schritt.",
+    "Heute zaehlt Fortschritt, nicht Perfektion."
   ];
 
   const STATUS_LABELS = {
     lobby: "Lobby",
     in_game: "In Runde",
     victory: "Sieg",
-    debrief: "Debrief",
+    debrief: "Nachbesprechung",
     completed: "Abgeschlossen"
   };
-
-  /**
-   * Sample quest ideas (10) for therapeutic expansion:
-   * 1) Worried Woods (deep anxiety exploration, grounding checkpoints)
-   * 2) Defeat Darkness Dragon (depression activation quests)
-   * 3) Social Shield Arena (social phobia exposure ladder)
-   * 4) Thought Storm Harbor (CBT thought records under pressure)
-   * 5) Emotion Atlas Expedition (DBT emotion labeling and validation)
-   * 6) Stress Volcano Control Room (distress tolerance chain skills)
-   * 7) Sleep Guardian Temple (sleep hygiene and rumination interruption)
-   * 8) Future Self Citadel (values-based action and perspective shifts)
-   * 9) Compassion Forge (self-compassion scripts against self-criticism)
-   * 10) Resilience Relay (team coping strategy drills and reflection loops)
-   */
   const QUEST_LIBRARY = [
     {
       id: "escape-anxiety-labyrinth",
       theme: "anxiety",
       title: "Flucht aus dem Angst-Labyrinth",
-      bossName: "Anxiety Monster",
-      summary: "Kooperatives Escape Room mit Achtsamkeit, Reframing und Stressmanagement."
+      bossName: "Nebel-Boss",
+      summary: "Gemeinsam ruhig werden und sichere Schritte waehlen."
     },
     {
       id: "inner-critic-boss",
       theme: "cbt-dbt",
-      title: "Kampf gegen den Inner Critic",
-      bossName: "Inner Critic",
-      summary: "Boss Fight mit Empathy Duel, Skill Race und Future-Self-Perspektive."
+      title: "Kampf gegen die innere Kritik",
+      bossName: "Kritik-Boss",
+      summary: "Mit klaren, freundlichen Antworten gegen schwere Gedanken."
     },
     {
       id: "darkness-dragon",
       theme: "depression",
-      title: "Defeat Darkness Dragon",
-      bossName: "Darkness Dragon",
-      summary: "Behavioral Activation und kleine machbare Schritte gegen Rueckzug."
+      title: "Licht gegen den Schatten-Drachen",
+      bossName: "Schatten-Drache",
+      summary: "Mit kleinen machbaren Schritten wieder in Bewegung kommen."
     },
     {
       id: "social-bridge",
       theme: "social-phobia",
-      title: "Bridge of Brave Steps",
-      bossName: "Echo Judge",
-      summary: "Anonyme Teamquests fuer sichere soziale Exposition."
+      title: "Bruecke der mutigen Schritte",
+      bossName: "Urteil-Echo",
+      summary: "Sicher ueben, wie man trotz Unsicherheit in Kontakt bleibt."
     },
     {
       id: "stress-reactor",
       theme: "stress",
-      title: "Stress Reactor Shutdown",
-      bossName: "Overload Titan",
-      summary: "Distress Tolerance und Priorisierung unter Zeitdruck."
+      title: "Stress-Reaktor beruhigen",
+      bossName: "Druck-Titan",
+      summary: "Ruhe finden und das Wichtigste zuerst tun."
     },
     {
       id: "emotion-compass",
       theme: "cbt-dbt",
-      title: "Emotion Compass Expedition",
-      bossName: "Mood Mirage",
-      summary: "Emotion Labeling, Validation und Wise-Mind Entscheidungen."
+      title: "Kompass fuer Gefuehle",
+      bossName: "Nebel-Spiegel",
+      summary: "Gefuehle benennen und passende Schritte waehlen."
     }
   ];
 
@@ -107,67 +93,72 @@
     {
       id: "escape-emotion-match",
       type: "escape",
-      title: "Raum 1: Emotion-Match-Up",
+      title: "Raum 1: Ruhe finden",
       description:
-        "Ordnet Symptome und Emotionen den hilfreichsten Coping-Skills zu. Jede hilfreiche Zuordnung oeffnet ein Segment der Tuer.",
+        "Du merkst Herzklopfen. Welche Antwort hilft sofort und bleibt freundlich?",
       options: [
-        "Herzrasen -> 4-7-8 Atmung",
-        "Katastrophengedanke -> Gedanken pruefen",
-        "Innere Unruhe -> Grounding 5-4-3-2-1",
-        "Rueckzug -> Mikro-Aktivierung"
-      ]
+        "Langsam einatmen und laenger ausatmen.",
+        "Sofort alles abbrechen und weggehen.",
+        "Mich hart beschimpfen.",
+        "Nichts tun und hoffen, dass es weggeht."
+      ],
+      correctOption: "Langsam einatmen und laenger ausatmen."
     },
     {
       id: "escape-strength-discovery",
       type: "escape",
-      title: "Raum 2: Staerke-Entdeckung",
+      title: "Raum 2: Gedanken pruefen",
       description:
-        "Das Anxiety Monster flackert. Nennt persönliche Staerken oder Ressourcen. Jede Ressource wird zu einem Schluessel.",
+        "Der Gedanke lautet: 'Ich kann das nie'. Welche Antwort ist am hilfreichsten?",
       options: [
-        "Ich halte schwierige Momente aus.",
-        "Ich frage um Hilfe, wenn es wichtig ist.",
-        "Ich kann kleine Schritte planen.",
-        "Ich bleibe auch bei Unsicherheit freundlich zu mir."
-      ]
+        "Ich frage mich: Welche Fakten sprechen dafuer und welche dagegen?",
+        "Ich glaube dem Gedanken sofort und gebe auf.",
+        "Ich schaeme mich und sage niemandem etwas.",
+        "Ich warte, bis andere das Problem loesen."
+      ],
+      correctOption: "Ich frage mich: Welche Fakten sprechen dafuer und welche dagegen?"
     },
     {
       id: "escape-coping-maze",
       type: "escape",
-      title: "Raum 3: Coping-Maze",
+      title: "Raum 3: Hilfe annehmen",
       description:
-        "Weggabelung: Vermeiden oder hilfreiches Handeln? Das Team waehlt gemeinsam Wege mit langfristiger Entlastung.",
+        "Du fuehlst dich ueberfordert. Welche Reaktion hilft auf Dauer am besten?",
       options: [
-        "Vermeidung -> Kurzfristig ruhig, langfristig enger",
-        "Schrittweise Konfrontation -> Kurzfristig schwer, langfristig frei",
-        "Selbstkritik -> Energie sinkt",
-        "Selbstmitgefuehl -> Energie steigt"
-      ]
+        "Eine vertraute Person um ein kurzes Nachfragen bitten.",
+        "Alles alleine tragen und mich zurueckziehen.",
+        "Mich ablenken und gar nicht mehr hinschauen.",
+        "Anderen die Schuld geben."
+      ],
+      correctOption: "Eine vertraute Person um ein kurzes Nachfragen bitten."
     },
     {
       id: "escape-group-jigsaw",
       type: "escape",
-      title: "Raum 4: Gruppen-Jigsaw",
+      title: "Raum 4: Kleiner Schritt",
       description:
-        "Jede Person steuert einen Teil zur Teambotschaft bei. Das finale Bild lautet: 'Angst ist ein Signal, kein Urteil.'",
+        "Welche Antwort macht den naechsten Schritt klar und machbar?",
       options: [
-        "Ich bin nicht allein.",
-        "Gefuehle sind Wellen, keine Befehle.",
-        "Atmen ist ein Skill, kein Trick.",
-        "Mut ist ein kleiner naechster Schritt."
-      ]
+        "Ich plane heute einen kleinen Schritt, den ich wirklich schaffe.",
+        "Ich mache alles perfekt oder gar nichts.",
+        "Ich verschiebe alles auf irgendwann.",
+        "Ich warte, bis ich keine Angst mehr habe."
+      ],
+      correctOption: "Ich plane heute einen kleinen Schritt, den ich wirklich schaffe."
     },
     {
       id: "escape-mindful-gate",
       type: "escape",
-      title: "Raum 5: Mindful Gate",
+      title: "Raum 5: Freundlich mit mir",
       description:
-        "30 Sekunden Achtsamkeitsfokus: 1 Gedanke, 1 Gefuehl, 1 Koerperempfindung benennen. Das stabilisiert das Team.",
+        "Welche Selbstbotschaft gibt Kraft, ohne Druck zu machen?",
       options: [
-        "Gedanke: 'Ich schaffe das nicht' -> Reframe",
-        "Gefuehl: Unsicherheit -> Validieren",
-        "Koerper: Druck in Brust -> Atmung",
-        "Impuls: Vermeiden -> Kleinen Schritt waehlen"
-      ]
+        "Ich darf langsam sein und trotzdem weitergehen.",
+        "Ich bin nur gut, wenn ich perfekt bin.",
+        "Ich muss das sofort loesen.",
+        "Ich darf keine Hilfe brauchen."
+      ],
+      correctOption: "Ich darf langsam sein und trotzdem weitergehen."
     }
   ];
 
@@ -175,54 +166,58 @@
     {
       id: "boss-empathy-duel",
       type: "boss",
-      title: "Boss Angriff 1: Empathy Duel",
+      title: "Boss-Angriff 1: Klare Antwort",
       description:
-        "Der Boss sagt: 'Du bist wertlos'. Formuliere eine empathische Antwort aus Sicht deines starken Ichs.",
+        "Der Boss sagt: 'Du schaffst das nie'. Welche Antwort ist hilfreich?",
       options: [
-        "Ein Gedanke ist nicht die Wahrheit.",
-        "Ich darf unsicher sein und trotzdem handeln.",
-        "Ich spreche mit mir wie mit einem Freund.",
-        "Ich bin in Entwicklung, nicht in Bewertung."
-      ]
+        "Ein Gedanke ist nicht automatisch die Wahrheit.",
+        "Der Boss hat recht. Ich gebe auf.",
+        "Ich mache mich klein und bleibe still.",
+        "Ich bestrafe mich fuer jeden Fehler."
+      ],
+      correctOption: "Ein Gedanke ist nicht automatisch die Wahrheit."
     },
     {
       id: "boss-skill-race",
       type: "boss",
-      title: "Boss Angriff 2: Skill Race",
+      title: "Boss-Angriff 2: Koerper beruhigen",
       description:
-        "Szenario: Akute Pruefungsangst. Waehle schnell einen hilfreichen Skill und erweitere ihn mit einem Mini-Plan.",
+        "Du bist stark angespannt. Welche Antwort hilft dem Koerper zuerst?",
       options: [
-        "Atemfokus fuer 60 Sekunden",
-        "Gedankenprotokoll kurz",
-        "Eiswasser / Temperatur-Skill",
-        "Support-Nachricht an Buddy"
-      ]
+        "Ruhig atmen: laenger aus als ein.",
+        "Noch schneller sprechen und handeln.",
+        "Koffein trinken und weiter pushen.",
+        "Alles runterschlucken und laecheln."
+      ],
+      correctOption: "Ruhig atmen: laenger aus als ein."
     },
     {
       id: "boss-perspective-battle",
       type: "boss",
-      title: "Boss Angriff 3: Perspective Battle",
+      title: "Boss-Angriff 3: Blick nach vorn",
       description:
-        "Beschreibe dieselbe Situation aus Perspektive deines Future Strong Self in 1-2 Saetzen.",
+        "Welche Haltung hilft dir, auch mit Unsicherheit weiterzugehen?",
       options: [
-        "In 6 Monaten sehe ich: ich war mutiger als gedacht.",
-        "Heute klein, morgen stabil.",
-        "Ich trainiere, nicht versage.",
-        "Ich waehle Richtung statt Perfektion."
-      ]
+        "Ich waehle einen kleinen Schritt statt Perfektion.",
+        "Ich darf erst starten, wenn ich sicher bin.",
+        "Ich gehe nur weiter, wenn andere es sagen.",
+        "Ich warte, bis das Problem verschwindet."
+      ],
+      correctOption: "Ich waehle einen kleinen Schritt statt Perfektion."
     },
     {
       id: "boss-affirmation-hunt",
       type: "boss",
-      title: "Finale: Affirmation Hunt",
+      title: "Finale: Team-Satz",
       description:
-        "Sammelt Team-Affirmationen als Ultimate Weapon. Jede konstruktive Aussage reduziert Boss-HP stark.",
+        "Welcher Team-Satz macht Mut und bleibt realistisch?",
       options: [
-        "Ich bin nicht mein Angstgedanke.",
-        "Ich kann Hilfe nutzen, ohne schwach zu sein.",
-        "Ich darf langsam sein und trotzdem vorankommen.",
-        "Ich habe bereits schwierige Tage ueberstanden."
-      ]
+        "Wir gehen Schritt fuer Schritt und bleiben verbunden.",
+        "Nur wer nie Angst hat, ist stark.",
+        "Wir muessen alles sofort loesen.",
+        "Hilfe annehmen ist ein Zeichen von Schwaeche."
+      ],
+      correctOption: "Wir gehen Schritt fuer Schritt und bleiben verbunden."
     }
   ];
 
@@ -230,68 +225,71 @@
     {
       id: "competitive-empathy",
       type: "competitive",
-      title: "Friendly Mode: Empathy Duel",
+      title: "Teamduell: Hilfreiche Antwort",
       description:
-        "Zwei Perspektiven werden verglichen. Gruppe votet anonym die hilfreichste Antwort (fokus auf Unterstuetzung).",
+        "Ihr tretet gegeneinander an. Welche Antwort unterstuetzt am besten?",
       options: [
-        "Antwort A: Validieren + Mini-Schritt",
-        "Antwort B: Reframe + Selbstmitgefuehl",
-        "Antwort C: Problemloesen + Pause",
-        "Antwort D: Wertekompass + Handlung"
-      ]
+        "Ich sehe dich. Wir gehen einen kleinen Schritt zusammen.",
+        "Reiss dich einfach zusammen.",
+        "Dafuer bist du selbst schuld.",
+        "Ignoriere es. Dann wird es von allein besser."
+      ],
+      correctOption: "Ich sehe dich. Wir gehen einen kleinen Schritt zusammen."
     },
     {
       id: "competitive-skill-race",
       type: "competitive",
-      title: "Friendly Mode: Skill Race",
+      title: "Teamduell: Schnell helfen",
       description:
-        "Wer zuerst einen sinnvollen Coping-Plan nennt, bekommt Bonuspunkte. Danach kurze gemeinsame Reflexion.",
+        "Was ist in der akuten Anspannung der beste erste Schritt?",
       options: [
-        "Atmen + Grounding",
-        "Gedankenstopp + Alternativgedanke",
-        "Kurz bewegen + trinken",
-        "Buddy-Check-in"
-      ]
+        "Atmen und den Boden unter den Fuessen spueren.",
+        "Noch mehr Druck aufbauen.",
+        "Mich selbst beleidigen.",
+        "Alles vermeiden und nichts sagen."
+      ],
+      correctOption: "Atmen und den Boden unter den Fuessen spueren."
     },
     {
       id: "competitive-perspective",
       type: "competitive",
-      title: "Friendly Mode: Perspective Battle",
+      title: "Teamduell: Blick wechseln",
       description:
-        "Formuliere die Situation aus Future-Strong-Self-Sicht. Punkte fuer Kreativitaet, Hoffnung und Realismus.",
+        "Welche Sicht hilft langfristig weiter?",
       options: [
-        "Heute lerne ich Tempo statt Druck.",
-        "Ich handle trotz Unsicherheit.",
-        "Ich wuerdige Fortschritt statt Perfektion.",
-        "Ich kann Hilfe annehmen und wachsen."
-      ]
+        "Ich darf lernen. Jeder kleine Schritt zaehlt.",
+        "Ich bin nur etwas wert, wenn alles perfekt ist.",
+        "Ich habe keine Chance, also lasse ich es.",
+        "Ich warte auf den perfekten Zeitpunkt."
+      ],
+      correctOption: "Ich darf lernen. Jeder kleine Schritt zaehlt."
     }
   ];
 
   const AVATAR_ADJECTIVES = [
-    "Brave",
-    "Calm",
-    "Wise",
-    "Curious",
-    "Steady",
-    "Bright",
-    "Gentle",
-    "Focused",
-    "Hopeful",
-    "Kind"
+    "Mutige",
+    "Ruhige",
+    "Kluge",
+    "Freundliche",
+    "Starke",
+    "Wache",
+    "Sanfte",
+    "Klare",
+    "Hoffnungsvolle",
+    "Geduldige"
   ];
 
   const AVATAR_ANIMALS = [
-    "Lion",
-    "Fox",
+    "Loewin",
+    "Fuchs",
     "Panda",
     "Otter",
-    "Falcon",
-    "Dolphin",
+    "Falke",
+    "Delfin",
     "Wolf",
     "Koala",
-    "Eagle",
-    "Bear"
+    "Adler",
+    "Baer"
   ];
 
   const ui = {};
@@ -308,11 +306,9 @@
     localAvatar: "",
     joined: false,
     unsubscribers: [],
-    debriefIntervalId: null,
-    roundIntervalId: null,
     deferredInstallPrompt: null,
-    autoDebriefRound: null,
-    autoTimedOutRound: null
+    selectedOption: "",
+    moderatorWindowRef: null
   };
 
   class DemoBackend {
@@ -1002,6 +998,7 @@
       "introSection",
       "therapistView",
       "playerView",
+      "moderatorView",
       "sessionSetupForm",
       "therapistAliasInput",
       "therapyThemeSelect",
@@ -1020,13 +1017,13 @@
       "roundDisplay",
       "teamLevelDisplay",
       "totalPointsDisplay",
-      "roundTimerDisplay",
       "memeCertificateArea",
       "startEscapeBtn",
       "startBossBtn",
       "startCompetitiveBtn",
       "openDebriefBtn",
       "completeSessionBtn",
+      "openModeratorWindowBtn",
       "therapistPlayersBody",
       "therapistChatFeed",
       "therapistChatInput",
@@ -1038,15 +1035,15 @@
       "playerJoinCard",
       "playerGameCard",
       "playerDebriefCard",
-      "playerSessionIdDisplay",
       "avatarPreview",
       "rerollAvatarBtn",
       "playerConsentCheckbox",
       "joinSessionBtn",
-      "debriefCountdown",
       "debriefQuestions",
       "playerAvatarBadge",
       "playerStatusBadge",
+      "playerBattleMode",
+      "playerOpponentName",
       "challengeTitle",
       "challengeDescription",
       "challengeOptions",
@@ -1057,13 +1054,24 @@
       "playerBossHpBar",
       "playerScoreValue",
       "playerTeamLevelValue",
-      "playerRoundTimerDisplay",
       "playerBadgesList",
       "playerChatFeed",
       "playerChatInput",
       "playerSendChatBtn",
       "playerStickers",
-      "stickerOnlyHint"
+      "stickerOnlyHint",
+      "moderatorSessionCode",
+      "moderatorStatusBadge",
+      "moderatorRoundDisplay",
+      "moderatorBossName",
+      "moderatorTeamProgressBar",
+      "moderatorBossHpBar",
+      "moderatorQuestionTitle",
+      "moderatorQuestionText",
+      "moderatorCorrectAnswer",
+      "moderatorAnswersBody",
+      "moderatorRankingBody",
+      "moderatorFullscreenBtn"
     ].forEach((id) => {
       ui[id] = document.getElementById(id);
     });
@@ -1072,25 +1080,27 @@
   function setupInitialState() {
     const query = new URLSearchParams(window.location.search);
     const sessionParam = normalizeSessionId(query.get("session"));
+    const moderatorMode = query.get("moderator") === "1";
     state.sessionId = sessionParam || null;
-    state.role = state.sessionId ? "player" : "therapist";
+    state.role = moderatorMode ? "moderator" : state.sessionId ? "player" : "therapist";
     state.localAvatar = generateAvatarName();
 
     ui.avatarPreview.textContent = state.localAvatar;
-    ui.playerSessionIdDisplay.textContent = state.sessionId || "-";
     ui.playerConsentCheckbox.checked = false;
     ui.playerDebriefCard.classList.add("d-none");
     ui.playerGameCard.classList.add("d-none");
-    ui.roundTimerDisplay.textContent = "--:--";
-    ui.playerRoundTimerDisplay.textContent = "--:--";
   }
 
   function toggleRoleView() {
     const therapist = state.role === "therapist";
+    const player = state.role === "player";
+    const moderator = state.role === "moderator";
     ui.therapistView.classList.toggle("d-none", !therapist);
-    ui.playerView.classList.toggle("d-none", therapist);
-    ui.appNavbar.classList.toggle("d-none", !therapist);
+    ui.playerView.classList.toggle("d-none", !player);
+    ui.moderatorView.classList.toggle("d-none", !moderator);
+    ui.appNavbar.classList.toggle("d-none", player);
     ui.introSection.classList.toggle("d-none", !therapist);
+    document.body.classList.toggle("moderator-screen", moderator);
   }
 
   function populateThemeSelect() {
@@ -1153,9 +1163,9 @@
   function renderQuickActionButtons() {
     ui.playerActionButtons.innerHTML = "";
     const actions = [
-      { id: "reframe", label: "Reframe Gedanke" },
+      { id: "reframe", label: "Hilfreichen Gedanken waehlen" },
       { id: "mindful-breath", label: "Achtsam atmen" },
-      { id: "support", label: "Team-Support geben" },
+      { id: "support", label: "Unterstuetzung geben" },
       { id: "next-step", label: "Naechsten Schritt planen" }
     ];
     actions.forEach((action) => {
@@ -1164,7 +1174,7 @@
       button.className = "btn btn-outline-success btn-sm";
       button.textContent = action.label;
       button.addEventListener("click", () => {
-        const text = `${action.label}: Ich waehle diesen Skill jetzt.`;
+        const text = `${action.label}: Das setze ich jetzt um.`;
         submitContribution({ actionType: action.id, presetMessage: text });
       });
       ui.playerActionButtons.append(button);
@@ -1185,6 +1195,7 @@
     ui.startCompetitiveBtn.addEventListener("click", startCompetitiveRound);
     ui.openDebriefBtn.addEventListener("click", openDebriefRound);
     ui.completeSessionBtn.addEventListener("click", completeSession);
+    ui.openModeratorWindowBtn.addEventListener("click", openModeratorWindow);
 
     ui.therapistSendChatBtn.addEventListener("click", () => sendChatMessage("therapist"));
     ui.playerSendChatBtn.addEventListener("click", () => sendChatMessage("player"));
@@ -1207,6 +1218,16 @@
       ui.avatarPreview.textContent = state.localAvatar;
     });
     ui.joinSessionBtn.addEventListener("click", joinAsPlayer);
+    ui.playerResponseInput.addEventListener("input", () => {
+      const value = ui.playerResponseInput.value.trim();
+      if (!state.selectedOption || value === state.selectedOption) {
+        return;
+      }
+      state.selectedOption = "";
+      ui.challengeOptions.querySelectorAll("button[data-option]").forEach((entry) => {
+        entry.classList.remove("is-selected");
+      });
+    });
 
     ui.submitContributionBtn.addEventListener("click", () => submitContribution({ actionType: "manual" }));
 
@@ -1215,7 +1236,12 @@
       if (!button) {
         return;
       }
-      ui.playerResponseInput.value = button.dataset.option || "";
+      const selectedText = button.dataset.option || "";
+      state.selectedOption = selectedText;
+      ui.playerResponseInput.value = selectedText;
+      ui.challengeOptions.querySelectorAll("button[data-option]").forEach((entry) => {
+        entry.classList.toggle("is-selected", entry === button);
+      });
     });
 
     window.addEventListener("beforeinstallprompt", (event) => {
@@ -1238,6 +1264,8 @@
       state.deferredInstallPrompt = null;
       ui.installBtn.disabled = true;
     });
+
+    ui.moderatorFullscreenBtn.addEventListener("click", toggleModeratorFullscreen);
   }
 
   async function initBackend() {
@@ -1252,7 +1280,7 @@
         state.backend = wampBackend;
         state.user = user;
         state.backendMode = "wamp";
-        setConnectionBadge("WAMP MySQL", "success");
+        setConnectionBadge("Online", "success");
         return;
       } catch (error) {
         console.error(error);
@@ -1271,7 +1299,7 @@
           state.backend = new FirebaseBackend(config);
           state.user = await state.backend.initAuth();
           state.backendMode = "firebase";
-          setConnectionBadge("Firebase Live", "success");
+          setConnectionBadge("Online", "success");
           return;
         } catch (error) {
           console.error(error);
@@ -1290,7 +1318,7 @@
     state.backend = new DemoBackend();
     state.user = await state.backend.initAuth();
     state.backendMode = "demo";
-    setConnectionBadge("Demo Local", "secondary");
+    setConnectionBadge("Demo", "secondary");
 
     const detail =
       reasons.length > 0
@@ -1312,9 +1340,12 @@
 
     await initBackend();
 
-    if (state.role === "player" && state.sessionId) {
+    if ((state.role === "player" || state.role === "moderator") && state.sessionId) {
       await subscribeToSession(state.sessionId);
-      ui.playerSessionIdDisplay.textContent = state.sessionId;
+    }
+
+    if (state.role === "moderator" && !state.sessionId) {
+      showAlert("Bitte Moderator-Fenster mit gueltiger Sitzung oeffnen.", "warning");
     }
   }
 
@@ -1325,7 +1356,7 @@
     }
 
     const quest = QUEST_LIBRARY.find((entry) => entry.id === ui.questSelect.value) || QUEST_LIBRARY[0];
-    const alias = sanitizeAlias(ui.therapistAliasInput.value) || "Guide Owl";
+    const alias = sanitizeAlias(ui.therapistAliasInput.value) || "Leitfaden Eule";
     const sessionId = await createUniqueSessionId();
     const joinLink = `${window.location.origin}${window.location.pathname}?session=${sessionId}`;
     const now = Date.now();
@@ -1349,11 +1380,9 @@
       totalPoints: 0,
       teamLevel: 1,
       meme: "",
-      debriefEndsAt: null,
-      roundEndsAt: null,
       currentChallenge: null,
       shortLink: joinLink,
-      scheduleMinutes: { game: 15, reflection: 30, nextGame: 15 }
+      scheduleMinutes: null
     };
 
     try {
@@ -1373,16 +1402,16 @@
       drawQrCode(joinLink);
       setTherapistControlsDisabled(false);
       await subscribeToSession(sessionId);
-      showAlert(`Session ${sessionId} erstellt. QR kann jetzt gescannt werden.`, "success");
+      showAlert(`Sitzung ${sessionId} erstellt. QR kann jetzt gescannt werden.`, "success");
       if ((state.players || []).length < MIN_RECOMMENDED_PLAYERS) {
         showAlert(
-          "Hinweis: Optimal sind 4-12 Teilnehmende. Unter 4 funktioniert es als Mini-Format.",
+          "Hinweis: Optimal sind 4-12 Teilnehmende. Mit weniger Personen geht auch eine kleine Runde.",
           "info"
         );
       }
     } catch (error) {
       console.error(error);
-      showAlert("Session konnte nicht erstellt werden.", "danger");
+      showAlert("Sitzung konnte nicht erstellt werden.", "danger");
     }
   }
 
@@ -1403,7 +1432,7 @@
       state.backend.watchSession(sessionId, (session) => {
         state.session = session;
         if (!session) {
-          showAlert("Session wurde nicht gefunden oder ist beendet.", "warning");
+          showAlert("Sitzung wurde nicht gefunden oder ist beendet.", "warning");
           return;
         }
         renderSession();
@@ -1441,8 +1470,6 @@
       }
     });
     state.unsubscribers = [];
-    stopDebriefTicker();
-    stopRoundTicker();
   }
 
   function renderSession() {
@@ -1460,14 +1487,24 @@
 
     ui.sessionStatusBadge.textContent = statusText;
     ui.playerStatusBadge.textContent = statusText;
+    ui.moderatorStatusBadge.textContent = statusText;
     setProgressBar(ui.teamProgressBar, progress, "bg-success");
     setProgressBar(ui.playerTeamProgressBar, progress, "bg-success");
+    setProgressBar(ui.moderatorTeamProgressBar, progress, "bg-success");
     setProgressBar(ui.bossHpBar, bossHp, "bg-danger");
     setProgressBar(ui.playerBossHpBar, bossHp, "bg-danger");
+    setProgressBar(ui.moderatorBossHpBar, bossHp, "bg-danger");
     ui.roundDisplay.textContent = String(round);
     ui.teamLevelDisplay.textContent = String(teamLevel);
     ui.totalPointsDisplay.textContent = String(totalPoints);
     ui.playerTeamLevelValue.textContent = String(teamLevel);
+    ui.moderatorRoundDisplay.textContent = String(round);
+    ui.playerBattleMode.textContent =
+      session.mode === "competitive" ? "Du spielst gegen die Gruppe." : "Du spielst mit der Gruppe.";
+    ui.playerOpponentName.textContent =
+      session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss";
+    ui.moderatorBossName.textContent =
+      session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss";
 
     ui.stickerOnlyHint.classList.toggle("d-none", !session.stickerOnly);
     const playerTextDisabled = Boolean(session.stickerOnly);
@@ -1482,40 +1519,38 @@
       }
     }
 
+    ui.moderatorSessionCode.textContent = session.sessionId || state.sessionId || "-";
     renderChallenge(session.currentChallenge);
-    renderRoundTimerState(session);
     renderMemeOrCertificate();
     renderDebriefState();
-
-    if (
-      state.role === "therapist" &&
-      session.status === "victory" &&
-      !session.debriefEndsAt &&
-      state.autoDebriefRound !== session.round
-    ) {
-      state.autoDebriefRound = session.round;
-      openDebriefRound();
-    }
+    renderModeratorBoard();
   }
 
   function renderChallenge(challenge) {
     if (!challenge) {
       ui.challengeTitle.textContent = "Warte auf Start...";
       ui.challengeDescription.textContent =
-        "Sobald die Therapeutin/der Therapeut die Runde startet, erscheint hier der Auftrag.";
+        "Sobald die Moderation die Runde startet, erscheint hier die Frage.";
       ui.challengeOptions.innerHTML = "";
+      state.selectedOption = "";
       return;
+    }
+
+    const availableOptions = Array.isArray(challenge.options) ? challenge.options : [];
+    if (!availableOptions.includes(state.selectedOption)) {
+      state.selectedOption = "";
     }
 
     ui.challengeTitle.textContent = challenge.title || "Neue Runde";
     ui.challengeDescription.textContent = challenge.description || "";
     ui.challengeOptions.innerHTML = "";
-    (challenge.options || []).forEach((optionText) => {
+    availableOptions.forEach((optionText) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "challenge-chip";
+      button.className = "answer-option-btn";
       button.dataset.option = optionText;
       button.textContent = optionText;
+      button.classList.toggle("is-selected", optionText === state.selectedOption);
       ui.challengeOptions.append(button);
     });
   }
@@ -1535,7 +1570,7 @@
     const memeLine = session.meme || pickRandom(MEME_LINES);
     const html = `
       <div class="meme-card mb-2">
-        <strong>Round Meme:</strong> ${escapeHtml(memeLine)}
+        <strong>Team-Moment:</strong> ${escapeHtml(memeLine)}
       </div>
       <div class="certificate-card">
         <strong>Zertifikat:</strong> Team "PsyQuest" hat Runde ${escapeHtml(
@@ -1578,12 +1613,14 @@
       ui.playerScoreValue.textContent = "0";
       renderOwnBadges([]);
     }
+
+    renderModeratorBoard();
   }
 
   function renderOwnBadges(badges) {
     ui.playerBadgesList.innerHTML = "";
     if (!badges || badges.length === 0) {
-      ui.playerBadgesList.innerHTML = '<span class="quiet-note">Noch keine Badges gesammelt.</span>';
+      ui.playerBadgesList.innerHTML = '<span class="quiet-note">Noch keine Auszeichnung.</span>';
       return;
     }
     badges.forEach((badgeText) => {
@@ -1600,32 +1637,33 @@
     const badges = [];
     if (score > 0) {
       const level = Math.min(5, Math.max(1, Math.floor(score / 40) + 1));
-      badges.push(`Thought Reframer Level ${level}`);
+      badges.push(`Klarer-Blick Stufe ${level}`);
     }
     if (contributions >= 3) {
-      badges.push("Empathy Hero");
+      badges.push("Mitgefuehl im Team");
     }
     if (contributions >= 6) {
-      badges.push("Team Anchor");
+      badges.push("Sicherer Team-Anker");
     }
     if (score >= 130) {
-      badges.push("Demon Hunter");
+      badges.push("Boss-Besieger");
     }
     return badges;
   }
 
   function renderChatFeeds() {
+    const visibleMessages = (state.chatMessages || []).filter((entry) => entry.messageType !== "answer");
     const feeds = [ui.therapistChatFeed, ui.playerChatFeed];
     feeds.forEach((feed) => {
       feed.innerHTML = "";
-      if ((state.chatMessages || []).length === 0) {
+      if (visibleMessages.length === 0) {
         const p = document.createElement("p");
         p.className = "text-body-secondary small mb-0";
         p.textContent = "Noch keine Nachrichten.";
         feed.append(p);
         return;
       }
-      state.chatMessages.forEach((entry) => {
+      visibleMessages.forEach((entry) => {
         const wrapper = document.createElement("div");
         wrapper.className = "chat-entry";
 
@@ -1647,6 +1685,7 @@
       });
       feed.scrollTop = feed.scrollHeight;
     });
+    renderModeratorBoard();
   }
 
   function renderNotes() {
@@ -1663,20 +1702,6 @@
     });
   }
 
-  function renderRoundTimerState(session) {
-    stopRoundTicker();
-    const label = session && session.status === "in_game" ? "Unbegrenzt" : "--:--";
-    ui.roundTimerDisplay.textContent = label;
-    ui.playerRoundTimerDisplay.textContent = label;
-  }
-
-  function stopRoundTicker() {
-    if (state.roundIntervalId) {
-      clearInterval(state.roundIntervalId);
-      state.roundIntervalId = null;
-    }
-  }
-
   function renderDebriefState() {
     const session = state.session;
     if (!session) {
@@ -1685,7 +1710,6 @@
     const isDebrief = session.status === "debrief";
     ui.playerDebriefCard.classList.toggle("d-none", !isDebrief);
     if (!isDebrief) {
-      stopDebriefTicker();
       return;
     }
 
@@ -1698,16 +1722,6 @@
       li.textContent = question;
       ui.debriefQuestions.append(li);
     });
-
-    stopDebriefTicker();
-    ui.debriefCountdown.textContent = "Unbegrenzt";
-  }
-
-  function stopDebriefTicker() {
-    if (state.debriefIntervalId) {
-      clearInterval(state.debriefIntervalId);
-      state.debriefIntervalId = null;
-    }
   }
 
   async function startEscapeRound() {
@@ -1722,11 +1736,10 @@
       mode: "cooperative",
       round,
       currentChallenge: challenge,
-      meme: "",
-      debriefEndsAt: null,
-      roundEndsAt: null
+      meme: ""
     };
-    await updateSessionWithFeedback(patch, "Escape Room Runde gestartet.");
+    state.selectedOption = "";
+    await updateSessionWithFeedback(patch, "Kooperative Runde gestartet.");
   }
 
   async function startBossRound() {
@@ -1742,11 +1755,10 @@
       round,
       bossHp: 100,
       currentChallenge: challenge,
-      meme: "",
-      debriefEndsAt: null,
-      roundEndsAt: null
+      meme: ""
     };
-    await updateSessionWithFeedback(patch, "Boss Fight gestartet.");
+    state.selectedOption = "";
+    await updateSessionWithFeedback(patch, "Boss-Runde gestartet.");
   }
 
   async function startCompetitiveRound() {
@@ -1761,11 +1773,10 @@
       mode: "competitive",
       round,
       currentChallenge: challenge,
-      meme: "",
-      debriefEndsAt: null,
-      roundEndsAt: null
+      meme: ""
     };
-    await updateSessionWithFeedback(patch, "Friendly Competitive Runde gestartet.");
+    state.selectedOption = "";
+    await updateSessionWithFeedback(patch, "Wettbewerbsrunde gestartet.");
   }
 
   async function openDebriefRound() {
@@ -1775,11 +1786,10 @@
     const questions = pickReflectionQuestions();
     const patch = {
       status: "debrief",
-      debriefEndsAt: null,
-      roundEndsAt: null,
+      currentChallenge: null,
       debriefQuestions: questions
     };
-    await updateSessionWithFeedback(patch, "Debrief gestartet.");
+    await updateSessionWithFeedback(patch, "Nachbesprechung gestartet.");
   }
 
   async function completeSession() {
@@ -1788,10 +1798,129 @@
     }
     const patch = {
       status: "completed",
-      roundEndsAt: null,
+      currentChallenge: null,
       completedAt: Date.now()
     };
-    await updateSessionWithFeedback(patch, "Session abgeschlossen.");
+    await updateSessionWithFeedback(patch, "Sitzung abgeschlossen.");
+  }
+
+  function openModeratorWindow() {
+    if (!state.sessionId) {
+      showAlert("Bitte zuerst eine Sitzung starten.", "warning");
+      return;
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.set("session", state.sessionId);
+    url.searchParams.set("moderator", "1");
+    state.moderatorWindowRef = window.open(
+      url.toString(),
+      "psyquest-moderator-screen",
+      "popup=yes,width=1280,height=920"
+    );
+    if (!state.moderatorWindowRef) {
+      showAlert("Das Moderator-Fenster wurde blockiert. Bitte Fensterfreigabe erlauben.", "warning");
+      return;
+    }
+    state.moderatorWindowRef.focus();
+    showAlert("Moderator-Fenster geoeffnet.", "success");
+  }
+
+  async function toggleModeratorFullscreen() {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+        return;
+      }
+      await document.documentElement.requestFullscreen();
+    } catch (error) {
+      console.warn(error);
+      showAlert("Vollbild konnte nicht gestartet werden.", "warning");
+    }
+  }
+
+  function renderModeratorBoard() {
+    if (!ui.moderatorView || !ui.moderatorAnswersBody || !ui.moderatorRankingBody) {
+      return;
+    }
+
+    const session = state.session;
+    if (!session) {
+      ui.moderatorQuestionTitle.textContent = "Noch keine aktive Runde";
+      ui.moderatorQuestionText.textContent = "Bitte Sitzung starten oder oeffnen.";
+      ui.moderatorCorrectAnswer.textContent = "-";
+      ui.moderatorAnswersBody.innerHTML =
+        '<tr><td colspan="3" class="text-center text-body-secondary">Noch keine Antworten.</td></tr>';
+      ui.moderatorRankingBody.innerHTML =
+        '<tr><td colspan="4" class="text-center text-body-secondary">Noch keine Spielenden.</td></tr>';
+      return;
+    }
+
+    const challenge = session.currentChallenge || null;
+    ui.moderatorQuestionTitle.textContent = challenge?.title || "Noch keine aktive Frage";
+    ui.moderatorQuestionText.textContent =
+      challenge?.description || "Sobald eine Runde startet, erscheint hier die Frage.";
+    ui.moderatorCorrectAnswer.textContent = challenge?.correctOption || "-";
+
+    const answers = collectCurrentRoundAnswers();
+    ui.moderatorAnswersBody.innerHTML = "";
+    if (answers.length === 0) {
+      ui.moderatorAnswersBody.innerHTML =
+        '<tr><td colspan="3" class="text-center text-body-secondary">Noch keine Antworten.</td></tr>';
+    } else {
+      answers.forEach((entry) => {
+        const row = document.createElement("tr");
+        const resultText = entry.isCorrect ? "Treffer" : "Alternative";
+        row.innerHTML = `
+          <td>${escapeHtml(entry.avatarName || "Spieler")}</td>
+          <td>${escapeHtml(entry.selectedOption || entry.message || "-")}</td>
+          <td>${escapeHtml(resultText)}</td>
+        `;
+        ui.moderatorAnswersBody.append(row);
+      });
+    }
+
+    const ranking = [...(state.players || [])]
+      .filter((player) => player.role !== "therapist")
+      .sort((a, b) => (b.score || 0) - (a.score || 0));
+    ui.moderatorRankingBody.innerHTML = "";
+    if (ranking.length === 0) {
+      ui.moderatorRankingBody.innerHTML =
+        '<tr><td colspan="4" class="text-center text-body-secondary">Noch keine Spielenden.</td></tr>';
+      return;
+    }
+    ranking.forEach((player, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${escapeHtml(String(index + 1))}</td>
+        <td>${escapeHtml(player.avatarName || "Spieler")}</td>
+        <td>${escapeHtml(String(player.score || 0))}</td>
+        <td>${escapeHtml(String(player.contributions || 0))}</td>
+      `;
+      ui.moderatorRankingBody.append(row);
+    });
+  }
+
+  function collectCurrentRoundAnswers() {
+    const session = state.session;
+    const round = Number(session?.round) || 0;
+    const challengeId = session?.currentChallenge?.id || "";
+    const sortedAnswerEntries = [...(state.chatMessages || [])]
+      .filter((entry) => entry.messageType === "answer")
+      .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+    const latestByPlayer = new Map();
+
+    sortedAnswerEntries.forEach((entry) => {
+      if (round && Number(entry.round) !== round) {
+        return;
+      }
+      if (challengeId && entry.challengeId && entry.challengeId !== challengeId) {
+        return;
+      }
+      const key = entry.uid || `${entry.avatarName || "Spieler"}-${entry.createdAt || 0}`;
+      latestByPlayer.set(key, entry);
+    });
+
+    return [...latestByPlayer.values()].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
   }
 
   async function updateSessionWithFeedback(patch, successText) {
@@ -1800,7 +1929,7 @@
       showAlert(successText, "success");
     } catch (error) {
       console.error(error);
-      showAlert("Session konnte nicht aktualisiert werden.", "danger");
+      showAlert("Sitzung konnte nicht aktualisiert werden.", "danger");
     }
   }
 
@@ -1828,15 +1957,15 @@
 
   async function joinAsPlayer() {
     if (!state.sessionId) {
-      showAlert("Keine Session-ID gefunden.", "warning");
+      showAlert("Keine Sitzungs-ID gefunden.", "warning");
       return;
     }
     if (!state.session) {
-      showAlert("Session wird geladen. Bitte kurz warten.", "info");
+      showAlert("Sitzung wird geladen. Bitte kurz warten.", "info");
       return;
     }
     if (state.session.status === "completed") {
-      showAlert("Diese Session ist bereits abgeschlossen.", "warning");
+      showAlert("Diese Sitzung ist bereits abgeschlossen.", "warning");
       return;
     }
 
@@ -1849,7 +1978,7 @@
     const alreadyJoined = state.players.some((player) => player.uid === state.user.uid);
     const activePlayers = state.players.filter((player) => player.role !== "therapist").length;
     if (!alreadyJoined && activePlayers >= MAX_PLAYERS) {
-      showAlert("Session ist voll (maximal 12 Teilnehmende).", "warning");
+      showAlert("Sitzung ist voll (maximal 12 Teilnehmende).", "warning");
       return;
     }
 
@@ -1874,7 +2003,7 @@
         uid: state.user.uid,
         avatarName: state.localAvatar,
         role: "player",
-        message: "ist der Session beigetreten.",
+        message: "ist der Sitzung beigetreten.",
         createdAt: Date.now()
       });
     } catch (error) {
@@ -1885,7 +2014,7 @@
 
   async function submitContribution({ actionType, presetMessage }) {
     if (!state.joined) {
-      showAlert("Bitte zuerst Session beitreten.", "warning");
+      showAlert("Bitte zuerst der Sitzung beitreten.", "warning");
       return;
     }
     if (!state.session || state.session.status !== "in_game") {
@@ -1893,22 +2022,38 @@
       return;
     }
 
-    const message = (presetMessage || ui.playerResponseInput.value || "").trim();
-    if (!message) {
-      showAlert("Bitte zuerst eine hilfreiche Antwort eingeben.", "warning");
+    const challenge = state.session.currentChallenge || null;
+    const typedMessage = (presetMessage || ui.playerResponseInput.value || "").trim();
+    const selectedOption =
+      presetMessage
+        ? ""
+        : state.selectedOption ||
+          (challenge?.options || []).find((entry) => entry === typedMessage) ||
+          "";
+    const answerText = selectedOption || typedMessage;
+    if (!answerText) {
+      showAlert("Bitte waehle zuerst eine Antwort.", "warning");
       return;
     }
 
     const challengeType = state.session.currentChallenge?.type || state.session.mode || "cooperative";
-    const impact = computeImpact(challengeType, message, actionType || "manual");
+    const impact = computeImpact(challengeType, answerText, actionType || "manual");
+    const correctOption = challenge?.correctOption || "";
+    const isCorrect = correctOption
+      ? normalizeAnswerText(answerText) === normalizeAnswerText(correctOption)
+      : false;
     const contribution = {
       challengeType,
-      message,
+      message: answerText,
       points: impact.points,
       progressGain: impact.progressGain,
       damage: impact.damage,
       actionType: actionType || "manual",
-      victoryMeme: pickRandom(MEME_LINES)
+      victoryMeme: pickRandom(MEME_LINES),
+      selectedOption: answerText,
+      round: Number(state.session.round) || 0,
+      challengeId: challenge?.id || "",
+      isCorrect
     };
 
     try {
@@ -1917,10 +2062,21 @@
         uid: state.user.uid,
         avatarName: state.localAvatar,
         role: "player",
-        message,
+        message: answerText,
+        messageType: "answer",
+        selectedOption: answerText,
+        round: Number(state.session.round) || 0,
+        challengeId: challenge?.id || "",
+        isCorrect,
+        correctOption,
         createdAt: Date.now()
       });
       ui.playerResponseInput.value = "";
+      state.selectedOption = "";
+      ui.challengeOptions.querySelectorAll("button[data-option]").forEach((entry) => {
+        entry.classList.remove("is-selected");
+      });
+      showAlert("Antwort gesendet.", isCorrect ? "success" : "info");
     } catch (error) {
       console.error(error);
       showAlert("Beitrag konnte nicht gesendet werden.", "danger");
@@ -1966,13 +2122,13 @@
 
   async function sendChatMessage(role, forcedMessage, forcedSticker) {
     if (!state.sessionId) {
-      showAlert("Bitte zuerst eine Session starten/beitreten.", "warning");
+      showAlert("Bitte zuerst eine Sitzung starten oder beitreten.", "warning");
       return;
     }
 
     const isPlayer = role === "player";
     if (isPlayer && !state.joined) {
-      showAlert("Bitte zuerst Session beitreten.", "warning");
+      showAlert("Bitte zuerst der Sitzung beitreten.", "warning");
       return;
     }
 
@@ -1985,13 +2141,13 @@
       return;
     }
     if (isPlayer && sessionStickerOnly && !sticker) {
-      showAlert("Diese Session nutzt Sticker-only Chat.", "info");
+      showAlert("In dieser Sitzung sind im Chat nur Sticker erlaubt.", "info");
       return;
     }
 
     const avatarName = isPlayer
       ? state.localAvatar
-      : sanitizeAlias(ui.therapistAliasInput.value) || "Guide Owl";
+      : sanitizeAlias(ui.therapistAliasInput.value) || "Leitfaden Eule";
 
     try {
       await state.backend.addChatMessage(state.sessionId, {
@@ -2021,6 +2177,7 @@
       ui.startCompetitiveBtn,
       ui.openDebriefBtn,
       ui.completeSessionBtn,
+      ui.openModeratorWindowBtn,
       ui.copyJoinLinkBtn,
       ui.therapistSendChatBtn,
       ui.saveNoteBtn
@@ -2034,7 +2191,7 @@
       return false;
     }
     if (!state.sessionId || !state.session) {
-      showAlert("Bitte zuerst eine Session erstellen.", "warning");
+      showAlert("Bitte zuerst eine Sitzung erstellen.", "warning");
       return false;
     }
     return true;
@@ -2080,7 +2237,7 @@
     close.type = "button";
     close.className = "btn-close";
     close.setAttribute("data-bs-dismiss", "alert");
-    close.setAttribute("aria-label", "Close");
+    close.setAttribute("aria-label", "Schliessen");
 
     alert.append(close);
     ui.globalAlertArea.append(alert);
@@ -2222,14 +2379,17 @@
     });
   }
 
-  function formatDuration(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
-    const seconds = String(totalSeconds % 60).padStart(2, "0");
-    return `${minutes}:${seconds}`;
+  function normalizeAnswerText(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
   }
 
   function setProgressBar(element, value, extraClass) {
+    if (!element) {
+      return;
+    }
     const clampedValue = clamp(value, 0, 100);
     element.style.width = `${clampedValue}%`;
     element.textContent = `${clampedValue}%`;

@@ -3,12 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="PsyQuest - Kooperative Multiplayer-Therapiespiele fuer Gruppen."
-    />
+    <meta name="description" content="PsyQuest - ruhiges therapeutisches Gruppenspiel." />
     <meta name="theme-color" content="#3b82f6" />
-    <title>PsyQuest - Group Therapy Game</title>
+    <title>PsyQuest - Therapeutisches Gruppenspiel</title>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./assets/icons/icon-192.svg" />
     <link
@@ -24,7 +21,7 @@
       <div class="container">
         <span class="navbar-brand fw-bold">PsyQuest</span>
         <div class="d-flex align-items-center gap-2">
-          <span id="connectionBadge" class="badge text-bg-secondary">Init...</span>
+          <span id="connectionBadge" class="badge text-bg-secondary">Start...</span>
           <button id="installBtn" class="btn btn-outline-primary btn-sm" disabled>
             Installieren
           </button>
@@ -38,10 +35,10 @@
       <section id="introSection" class="mb-3">
         <div class="card shadow-sm border-0 bg-primary-subtle">
           <div class="card-body">
-            <h1 class="h4 mb-2">PsyQuest - "Es ist nur ein Spiel, aber mit echten Skills"</h1>
+            <h1 class="h4 mb-2">PsyQuest</h1>
             <p class="mb-0">
-              Multiplayer-PWA fuer 4-12 Personen (14+). Ohne Konto, ohne App-Store-Zwang,
-              anonyme Avatare und therapeutisch fundierte CBT/DBT-Mechaniken.
+              Ein ruhiges Gruppenspiel fuer Therapie und Training. Die Gruppe spielt gemeinsam gegen einen
+              Boss oder in einem fairen Duell. Die Sprache ist einfach und klar.
             </p>
           </div>
         </div>
@@ -51,17 +48,17 @@
         <div class="row g-3">
           <div class="col-lg-4">
             <div class="card h-100 shadow-sm">
-              <div class="card-header fw-semibold">Therapeut*innen-Dashboard</div>
+              <div class="card-header fw-semibold">Moderation starten</div>
               <div class="card-body">
                 <form id="sessionSetupForm" class="vstack gap-3">
                   <div>
-                    <label for="therapistAliasInput" class="form-label">Moderator-Alias</label>
+                    <label for="therapistAliasInput" class="form-label">Name der Moderation</label>
                     <input
                       id="therapistAliasInput"
                       class="form-control"
                       type="text"
                       maxlength="40"
-                      placeholder="z. B. TeamCoach"
+                      placeholder="z. B. Teamleitung"
                     />
                   </div>
 
@@ -71,45 +68,37 @@
                   </div>
 
                   <div>
-                    <label for="questSelect" class="form-label">Quest</label>
+                    <label for="questSelect" class="form-label">Spielweg</label>
                     <select id="questSelect" class="form-select"></select>
                   </div>
 
                   <div>
-                    <label for="modeSelect" class="form-label">Startmodus</label>
+                    <label for="modeSelect" class="form-label">Spielart</label>
                     <select id="modeSelect" class="form-select">
-                      <option value="cooperative">Kooperativ (Empfohlen)</option>
-                      <option value="competitive">Friendly Competitive</option>
-                      <option value="mixed">Mixed Session</option>
+                      <option value="cooperative">Gemeinsam gegen den Boss</option>
+                      <option value="competitive">Teamduell (freundlich)</option>
+                      <option value="mixed">Gemischt</option>
                     </select>
                   </div>
 
                   <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="stickerOnlyMode" />
                     <label class="form-check-label" for="stickerOnlyMode">
-                      Anonymitaetsmodus (Sticker-Chat statt Freitext)
+                      Nur Sticker im Chat
                     </label>
                   </div>
 
                   <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="consentRequired" checked />
                     <label class="form-check-label" for="consentRequired">
-                      Einwilligung vor Join erforderlich (DSGVO)
+                      Einwilligung vor dem Beitritt
                     </label>
                   </div>
 
                   <button id="createSessionBtn" class="btn btn-primary" type="submit">
-                    Session starten & QR erzeugen
+                    Sitzung starten und QR-Code erstellen
                   </button>
                 </form>
-
-                <hr />
-                <h2 class="h6">Empfohlener 45-60 Min Ablauf</h2>
-                <ul class="small mb-0 ps-3">
-                  <li>15 Min Spielrunde (Koop oder Boss Fight)</li>
-                  <li>30 Min Reflexion & Transfer in Alltag</li>
-                  <li>15 Min zweite Spielrunde / Abschluss</li>
-                </ul>
               </div>
             </div>
           </div>
@@ -117,7 +106,7 @@
           <div class="col-lg-8">
             <div class="card shadow-sm mb-3">
               <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold">Session & Join</span>
+                <span class="fw-semibold">Sitzung und Beitritt</span>
                 <span id="sessionStatusBadge" class="badge text-bg-secondary">Lobby</span>
               </div>
               <div class="card-body">
@@ -127,9 +116,9 @@
                   </div>
                   <div class="col-md-8">
                     <p class="mb-2">
-                      Session-ID: <span id="sessionIdDisplay" class="fw-semibold">-</span>
+                      Sitzungscode: <span id="sessionIdDisplay" class="fw-semibold">-</span>
                     </p>
-                    <label for="joinLinkInput" class="form-label">Kurzlink</label>
+                    <label for="joinLinkInput" class="form-label">Link fuer die Gruppe</label>
                     <div class="input-group">
                       <input id="joinLinkInput" class="form-control" type="text" readonly />
                       <button id="copyJoinLinkBtn" class="btn btn-outline-secondary" type="button">
@@ -137,7 +126,7 @@
                       </button>
                     </div>
                     <p class="small text-body-secondary mt-2 mb-0">
-                      Teilnehmende scannen den QR-Code und landen direkt im Join-Screen.
+                      Teilnehmende scannen den QR-Code und landen direkt im Beitritt.
                     </p>
                   </div>
                 </div>
@@ -145,41 +134,40 @@
             </div>
 
             <div class="card shadow-sm mb-3">
-              <div class="card-header fw-semibold">Live-Game-Steuerung</div>
+              <div class="card-header fw-semibold">Kampf-Steuerung</div>
               <div class="card-body">
                 <div class="d-flex flex-wrap gap-2 mb-3">
                   <button id="startEscapeBtn" class="btn btn-success btn-sm" type="button">
-                    Escape Room Runde
+                    Kooperative Runde
                   </button>
                   <button id="startBossBtn" class="btn btn-danger btn-sm" type="button">
-                    Boss Fight Runde
+                    Boss-Runde
                   </button>
                   <button id="startCompetitiveBtn" class="btn btn-warning btn-sm" type="button">
-                    Friendly Competitive
+                    Teamduell
                   </button>
                   <button id="openDebriefBtn" class="btn btn-info btn-sm" type="button">
-                    Debrief starten
+                    Nachbesprechung
                   </button>
                   <button id="completeSessionBtn" class="btn btn-outline-dark btn-sm" type="button">
-                    Session abschliessen
+                    Sitzung abschliessen
+                  </button>
+                  <button id="openModeratorWindowBtn" class="btn btn-outline-primary btn-sm" type="button">
+                    Moderator-Fenster oeffnen
                   </button>
                 </div>
 
                 <div class="row g-3">
                   <div class="col-md-6">
                     <label class="form-label mb-1">Team-Fortschritt</label>
-                    <div class="progress" role="progressbar" aria-label="Team Fortschritt">
-                      <div id="teamProgressBar" class="progress-bar bg-success" style="width: 0%">
-                        0%
-                      </div>
+                    <div class="progress" role="progressbar" aria-label="Team-Fortschritt">
+                      <div id="teamProgressBar" class="progress-bar bg-success" style="width: 0%">0%</div>
                     </div>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label mb-1">Boss-HP (Innerer Daemon)</label>
-                    <div class="progress" role="progressbar" aria-label="Boss HP">
-                      <div id="bossHpBar" class="progress-bar bg-danger" style="width: 100%">
-                        100%
-                      </div>
+                    <label class="form-label mb-1">Boss-Status</label>
+                    <div class="progress" role="progressbar" aria-label="Boss-Status">
+                      <div id="bossHpBar" class="progress-bar bg-danger" style="width: 100%">100%</div>
                     </div>
                   </div>
                 </div>
@@ -189,14 +177,11 @@
                     Runde: <span id="roundDisplay" class="fw-semibold">0</span>
                   </div>
                   <div class="col-sm-4">
-                    Team-Level: <span id="teamLevelDisplay" class="fw-semibold">1</span>
+                    Team-Stufe: <span id="teamLevelDisplay" class="fw-semibold">1</span>
                   </div>
                   <div class="col-sm-4">
-                    Gesamtpunkte: <span id="totalPointsDisplay" class="fw-semibold">0</span>
+                    Punkte: <span id="totalPointsDisplay" class="fw-semibold">0</span>
                   </div>
-                </div>
-                <div class="small mt-2">
-                  Runden-Timer: <span id="roundTimerDisplay" class="fw-semibold">--:--</span>
                 </div>
 
                 <div id="memeCertificateArea" class="mt-3"></div>
@@ -204,7 +189,7 @@
             </div>
 
             <div class="card shadow-sm mb-3">
-              <div class="card-header fw-semibold">Teilnehmende & Badges</div>
+              <div class="card-header fw-semibold">Teilnehmende</div>
               <div class="card-body p-0">
                 <div class="table-responsive">
                   <table class="table table-sm table-hover mb-0">
@@ -213,7 +198,7 @@
                         <th>Avatar</th>
                         <th>Punkte</th>
                         <th>Beitraege</th>
-                        <th>Badge</th>
+                        <th>Auszeichnung</th>
                       </tr>
                     </thead>
                     <tbody id="therapistPlayersBody">
@@ -227,7 +212,7 @@
             </div>
 
             <div class="card shadow-sm mb-3">
-              <div class="card-header fw-semibold">Moderations-Chat</div>
+              <div class="card-header fw-semibold">Gruppenchat</div>
               <div class="card-body">
                 <div id="therapistChatFeed" class="chat-feed mb-3"></div>
                 <div class="input-group mb-2">
@@ -235,7 +220,7 @@
                     id="therapistChatInput"
                     class="form-control"
                     maxlength="220"
-                    placeholder="Nachricht an Gruppe..."
+                    placeholder="Nachricht an die Gruppe..."
                   />
                   <button id="therapistSendChatBtn" class="btn btn-outline-primary" type="button">
                     Senden
@@ -245,80 +230,20 @@
               </div>
             </div>
 
-            <div class="card shadow-sm mb-3">
-              <div class="card-header fw-semibold">Anonyme Therapienotizen (DSGVO)</div>
+            <div class="card shadow-sm">
+              <div class="card-header fw-semibold">Anonyme Notizen</div>
               <div class="card-body">
                 <textarea
                   id="therapistNoteInput"
                   class="form-control mb-2"
                   rows="3"
                   maxlength="500"
-                  placeholder="Nur anonyme Beobachtungen speichern..."
+                  placeholder="Nur anonyme Beobachtungen..."
                 ></textarea>
                 <button id="saveNoteBtn" class="btn btn-outline-secondary btn-sm" type="button">
                   Notiz speichern
                 </button>
                 <ul id="therapistNotesList" class="list-group list-group-flush mt-3"></ul>
-              </div>
-            </div>
-
-            <div class="accordion shadow-sm" id="gameDetailAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button
-                    class="accordion-button"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#escapeDetail"
-                  >
-                    Detailliertes Spiel: Flucht aus dem Angst-Labyrinth
-                  </button>
-                </h2>
-                <div id="escapeDetail" class="accordion-collapse collapse show" data-bs-parent="#gameDetailAccordion">
-                  <div class="accordion-body small">
-                    <p>
-                      Einstieg: Das Team betritt ein dunkles Labyrinth. Das Anxiety Monster blockiert den Ausgang.
-                      Ziel ist es, in 4-6 Mini-Raetseln Coping-Tools zu sammeln.
-                    </p>
-                    <ol class="mb-2">
-                      <li><strong>Emotion-Match-Up:</strong> Emotionen passenden Skills zuordnen.</li>
-                      <li><strong>Staerke-Entdeckung:</strong> Eigene Staerken als Schluessel nutzen.</li>
-                      <li><strong>Coping-Maze:</strong> Hilfreiche statt vermeidende Wege waehlen.</li>
-                      <li><strong>Gruppen-Jigsaw:</strong> Gemeinsam Sinnbild fuer Hoffnung zusammensetzen.</li>
-                    </ol>
-                    <p class="mb-0">
-                      Fokus: Normalisierung von Stress, Emotionsregulation, Perspektivwechsel und Gruppenkohesion.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button
-                    class="accordion-button collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#bossDetail"
-                  >
-                    Detailliertes Spiel: Boss Fight gegen Inner Critic / Anxiety Monster
-                  </button>
-                </h2>
-                <div id="bossDetail" class="accordion-collapse collapse" data-bs-parent="#gameDetailAccordion">
-                  <div class="accordion-body small">
-                    <p>
-                      Einstieg: Boss mit 100 HP greift mit negativen Gedanken an. Das Team kontert in 3-5 Runden.
-                    </p>
-                    <ol class="mb-2">
-                      <li><strong>Empathy Duel:</strong> Hilfreichste empathische Antwort wird anonym gevotet.</li>
-                      <li><strong>Skill Race:</strong> Schnell wirksame Coping-Strategie auswaehlen/eingeben.</li>
-                      <li><strong>Perspective Battle:</strong> Situation aus dem "future strong self" formulieren.</li>
-                      <li><strong>Affirmation Hunt:</strong> Team sammelt positive Aussagen als Endwaffe.</li>
-                    </ol>
-                    <p class="mb-0">
-                      Fokus: Selbstmitgefuehl, schnelle Selbstregulation, kreative Resilienz und soziale Unterstuetzung.
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -327,17 +252,13 @@
 
       <section id="playerView" class="d-none">
         <div class="row g-3">
-          <div class="col-lg-5">
+          <div class="col-lg-4">
             <div id="playerJoinCard" class="card shadow-sm">
-              <div class="card-header fw-semibold">Session beitreten</div>
+              <div class="card-header fw-semibold">Beitritt</div>
               <div class="card-body">
-                <p class="mb-2">
-                  Session-ID:
-                  <span id="playerSessionIdDisplay" class="fw-semibold">-</span>
-                </p>
                 <div class="border rounded p-3 bg-light-subtle mb-3">
                   <p class="mb-1 small text-body-secondary">Dein anonymer Avatar</p>
-                  <div id="avatarPreview" class="h5 mb-2">Brave Lion</div>
+                  <div id="avatarPreview" class="h5 mb-2">Mutige Loewin</div>
                   <button id="rerollAvatarBtn" class="btn btn-outline-secondary btn-sm" type="button">
                     Neuer Avatar
                   </button>
@@ -346,7 +267,7 @@
                 <div class="form-check mb-3">
                   <input class="form-check-input" type="checkbox" id="playerConsentCheckbox" />
                   <label class="form-check-label small" for="playerConsentCheckbox">
-                    Ich stimme anonymer Datenspeicherung fuer diese Session zu.
+                    Ich stimme der anonymen Speicherung fuer diese Sitzung zu.
                   </label>
                 </div>
 
@@ -356,29 +277,52 @@
               </div>
             </div>
 
-            <div id="playerDebriefCard" class="card shadow-sm d-none">
-              <div class="card-header fw-semibold">Debriefing</div>
+            <div id="playerDebriefCard" class="card shadow-sm d-none mt-3">
+              <div class="card-header fw-semibold">Nachbesprechung</div>
               <div class="card-body">
-                <div class="mb-2">
-                  Zeitlimit: <span id="debriefCountdown" class="fw-semibold">Unbegrenzt</span>
-                </div>
                 <ul id="debriefQuestions" class="small ps-3 mb-0"></ul>
               </div>
             </div>
           </div>
 
-          <div class="col-lg-7">
+          <div class="col-lg-8">
             <div id="playerGameCard" class="card shadow-sm d-none mb-3">
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span id="playerAvatarBadge" class="badge text-bg-primary">Avatar</span>
                 <span id="playerStatusBadge" class="badge text-bg-secondary">Lobby</span>
               </div>
               <div class="card-body">
-                <h2 id="challengeTitle" class="h5">Warte auf Start...</h2>
+                <div class="battle-stage mb-3">
+                  <div class="battle-row">
+                    <div class="battle-label">Gegner</div>
+                    <div id="playerOpponentName" class="battle-name">Boss</div>
+                  </div>
+                  <div class="battle-row">
+                    <div class="battle-label">Spielart</div>
+                    <div id="playerBattleMode" class="battle-name">Du spielst mit der Gruppe.</div>
+                  </div>
+                </div>
+
+                <div class="row g-3 mt-1">
+                  <div class="col-6">
+                    <label class="form-label mb-1 small">Team-Fortschritt</label>
+                    <div class="progress">
+                      <div id="playerTeamProgressBar" class="progress-bar bg-success" style="width: 0%">0%</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label mb-1 small">Boss-Status</label>
+                    <div class="progress">
+                      <div id="playerBossHpBar" class="progress-bar bg-danger" style="width: 100%">100%</div>
+                    </div>
+                  </div>
+                </div>
+
+                <h2 id="challengeTitle" class="h5 mt-4">Warte auf Start...</h2>
                 <p id="challengeDescription" class="mb-2 text-body-secondary">
-                  Sobald die Runde beginnt, erscheint hier dein Auftrag.
+                  Sobald die Runde startet, siehst du hier die Frage.
                 </p>
-                <div id="challengeOptions" class="d-flex flex-wrap gap-2 mb-3"></div>
+                <div id="challengeOptions" class="answer-options-grid mb-3"></div>
 
                 <div class="row g-2">
                   <div class="col-md-8">
@@ -386,41 +330,21 @@
                       id="playerResponseInput"
                       class="form-control"
                       maxlength="180"
-                      placeholder="Deine hilfreiche Antwort..."
+                      placeholder="Optional: Eigene kurze Antwort"
                     />
                   </div>
                   <div class="col-md-4 d-grid">
                     <button id="submitContributionBtn" class="btn btn-success" type="button">
-                      Beitrag senden
+                      Antwort senden
                     </button>
                   </div>
                 </div>
 
                 <div id="playerActionButtons" class="d-flex flex-wrap gap-2 mt-3"></div>
 
-                <div class="row g-3 mt-1">
-                  <div class="col-6">
-                    <label class="form-label mb-1 small">Team-Fortschritt</label>
-                    <div class="progress">
-                      <div id="playerTeamProgressBar" class="progress-bar bg-success" style="width: 0%">
-                        0%
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <label class="form-label mb-1 small">Boss-HP</label>
-                    <div class="progress">
-                      <div id="playerBossHpBar" class="progress-bar bg-danger" style="width: 100%">
-                        100%
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 <div class="mt-3 small">
-                  Score: <span id="playerScoreValue" class="fw-semibold">0</span> |
-                  Team-Level: <span id="playerTeamLevelValue" class="fw-semibold">1</span> |
-                  Runden-Timer: <span id="playerRoundTimerDisplay" class="fw-semibold">--:--</span>
+                  Punkte: <span id="playerScoreValue" class="fw-semibold">0</span> |
+                  Team-Stufe: <span id="playerTeamLevelValue" class="fw-semibold">1</span>
                 </div>
                 <div id="playerBadgesList" class="mt-2"></div>
               </div>
@@ -435,7 +359,7 @@
                     id="playerChatInput"
                     class="form-control"
                     maxlength="220"
-                    placeholder="Mutmachende Nachricht..."
+                    placeholder="Kurze unterstuetzende Nachricht..."
                   />
                   <button id="playerSendChatBtn" class="btn btn-outline-primary" type="button">
                     Senden
@@ -443,8 +367,128 @@
                 </div>
                 <div id="playerStickers" class="d-flex flex-wrap gap-2"></div>
                 <p id="stickerOnlyHint" class="small text-body-secondary mt-2 d-none">
-                  Diese Session nutzt Sticker-only fuer maximale Anonymitaet.
+                  In dieser Sitzung sind nur Sticker erlaubt.
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="moderatorView" class="d-none">
+        <div class="card shadow-sm mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="fw-semibold">Moderator-Ansicht fuer Gruppe</div>
+            <button id="moderatorFullscreenBtn" class="btn btn-outline-primary btn-sm" type="button">
+              Vollbild
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <div class="battle-stage h-100">
+                  <div class="battle-row">
+                    <div class="battle-label">Sitzung</div>
+                    <div id="moderatorSessionCode" class="battle-name">-</div>
+                  </div>
+                  <div class="battle-row">
+                    <div class="battle-label">Status</div>
+                    <div id="moderatorStatusBadge" class="battle-name">Lobby</div>
+                  </div>
+                  <div class="battle-row">
+                    <div class="battle-label">Runde</div>
+                    <div id="moderatorRoundDisplay" class="battle-name">0</div>
+                  </div>
+                  <div class="battle-row">
+                    <div class="battle-label">Gegner</div>
+                    <div id="moderatorBossName" class="battle-name">Boss</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="card border-0 bg-light-subtle h-100">
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label mb-1">Team-Fortschritt</label>
+                      <div class="progress">
+                        <div id="moderatorTeamProgressBar" class="progress-bar bg-success" style="width: 0%">
+                          0%
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="form-label mb-1">Boss-Status</label>
+                      <div class="progress">
+                        <div id="moderatorBossHpBar" class="progress-bar bg-danger" style="width: 100%">
+                          100%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card border-0 bg-light-subtle mb-3">
+              <div class="card-body">
+                <h2 id="moderatorQuestionTitle" class="h5 mb-2">Noch keine aktive Frage</h2>
+                <p id="moderatorQuestionText" class="mb-2 text-body-secondary">
+                  Sobald eine Runde startet, erscheint hier die Frage.
+                </p>
+                <div>
+                  <strong>Richtige Antwort:</strong>
+                  <span id="moderatorCorrectAnswer">-</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-lg-6">
+                <div class="card h-100">
+                  <div class="card-header fw-semibold">Gewaehlte Antworten</div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-hover mb-0">
+                        <thead>
+                          <tr>
+                            <th>Spieler</th>
+                            <th>Antwort</th>
+                            <th>Wertung</th>
+                          </tr>
+                        </thead>
+                        <tbody id="moderatorAnswersBody">
+                          <tr>
+                            <td colspan="3" class="text-center text-body-secondary">Noch keine Antworten.</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card h-100">
+                  <div class="card-header fw-semibold">Punktestand</div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-hover mb-0">
+                        <thead>
+                          <tr>
+                            <th>Rang</th>
+                            <th>Spieler</th>
+                            <th>Punkte</th>
+                            <th>Beitraege</th>
+                          </tr>
+                        </thead>
+                        <tbody id="moderatorRankingBody">
+                          <tr>
+                            <td colspan="4" class="text-center text-body-secondary">Noch keine Spielenden.</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
