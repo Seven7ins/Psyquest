@@ -1085,21 +1085,39 @@
     state.role = moderatorMode ? "moderator" : state.sessionId ? "player" : "therapist";
     state.localAvatar = generateAvatarName();
 
-    ui.avatarPreview.textContent = state.localAvatar;
-    ui.playerConsentCheckbox.checked = false;
-    ui.playerDebriefCard.classList.add("d-none");
-    ui.playerGameCard.classList.add("d-none");
+    if (ui.avatarPreview) {
+      ui.avatarPreview.textContent = state.localAvatar;
+    }
+    if (ui.playerConsentCheckbox) {
+      ui.playerConsentCheckbox.checked = false;
+    }
+    if (ui.playerDebriefCard) {
+      ui.playerDebriefCard.classList.add("d-none");
+    }
+    if (ui.playerGameCard) {
+      ui.playerGameCard.classList.add("d-none");
+    }
   }
 
   function toggleRoleView() {
     const therapist = state.role === "therapist";
     const player = state.role === "player";
     const moderator = state.role === "moderator";
-    ui.therapistView.classList.toggle("d-none", !therapist);
-    ui.playerView.classList.toggle("d-none", !player);
-    ui.moderatorView.classList.toggle("d-none", !moderator);
-    ui.appNavbar.classList.toggle("d-none", player);
-    ui.introSection.classList.toggle("d-none", !therapist);
+    if (ui.therapistView) {
+      ui.therapistView.classList.toggle("d-none", !therapist);
+    }
+    if (ui.playerView) {
+      ui.playerView.classList.toggle("d-none", !player);
+    }
+    if (ui.moderatorView) {
+      ui.moderatorView.classList.toggle("d-none", !moderator);
+    }
+    if (ui.appNavbar) {
+      ui.appNavbar.classList.toggle("d-none", player);
+    }
+    if (ui.introSection) {
+      ui.introSection.classList.toggle("d-none", !therapist);
+    }
     document.body.classList.toggle("moderator-screen", moderator);
   }
 
@@ -1195,7 +1213,9 @@
     ui.startCompetitiveBtn.addEventListener("click", startCompetitiveRound);
     ui.openDebriefBtn.addEventListener("click", openDebriefRound);
     ui.completeSessionBtn.addEventListener("click", completeSession);
-    ui.openModeratorWindowBtn.addEventListener("click", openModeratorWindow);
+    if (ui.openModeratorWindowBtn) {
+      ui.openModeratorWindowBtn.addEventListener("click", openModeratorWindow);
+    }
 
     ui.therapistSendChatBtn.addEventListener("click", () => sendChatMessage("therapist"));
     ui.playerSendChatBtn.addEventListener("click", () => sendChatMessage("player"));
@@ -1265,7 +1285,9 @@
       ui.installBtn.disabled = true;
     });
 
-    ui.moderatorFullscreenBtn.addEventListener("click", toggleModeratorFullscreen);
+    if (ui.moderatorFullscreenBtn) {
+      ui.moderatorFullscreenBtn.addEventListener("click", toggleModeratorFullscreen);
+    }
   }
 
   async function initBackend() {
@@ -1485,41 +1507,55 @@
     const teamLevel = Number(session.teamLevel) || 1;
     const totalPoints = Number(session.totalPoints) || 0;
 
-    ui.sessionStatusBadge.textContent = statusText;
-    ui.playerStatusBadge.textContent = statusText;
-    ui.moderatorStatusBadge.textContent = statusText;
+    setTextIfPresent(ui.sessionStatusBadge, statusText);
+    setTextIfPresent(ui.playerStatusBadge, statusText);
+    setTextIfPresent(ui.moderatorStatusBadge, statusText);
     setProgressBar(ui.teamProgressBar, progress, "bg-success");
     setProgressBar(ui.playerTeamProgressBar, progress, "bg-success");
     setProgressBar(ui.moderatorTeamProgressBar, progress, "bg-success");
     setProgressBar(ui.bossHpBar, bossHp, "bg-danger");
     setProgressBar(ui.playerBossHpBar, bossHp, "bg-danger");
     setProgressBar(ui.moderatorBossHpBar, bossHp, "bg-danger");
-    ui.roundDisplay.textContent = String(round);
-    ui.teamLevelDisplay.textContent = String(teamLevel);
-    ui.totalPointsDisplay.textContent = String(totalPoints);
-    ui.playerTeamLevelValue.textContent = String(teamLevel);
-    ui.moderatorRoundDisplay.textContent = String(round);
-    ui.playerBattleMode.textContent =
-      session.mode === "competitive" ? "Du spielst gegen die Gruppe." : "Du spielst mit der Gruppe.";
-    ui.playerOpponentName.textContent =
-      session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss";
-    ui.moderatorBossName.textContent =
-      session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss";
+    setTextIfPresent(ui.roundDisplay, String(round));
+    setTextIfPresent(ui.teamLevelDisplay, String(teamLevel));
+    setTextIfPresent(ui.totalPointsDisplay, String(totalPoints));
+    setTextIfPresent(ui.playerTeamLevelValue, String(teamLevel));
+    setTextIfPresent(ui.moderatorRoundDisplay, String(round));
+    setTextIfPresent(
+      ui.playerBattleMode,
+      session.mode === "competitive" ? "Du spielst gegen die Gruppe." : "Du spielst mit der Gruppe."
+    );
+    setTextIfPresent(
+      ui.playerOpponentName,
+      session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss"
+    );
+    setTextIfPresent(
+      ui.moderatorBossName,
+      session.mode === "competitive" ? "Gegner-Team" : session.bossName || "Boss"
+    );
 
-    ui.stickerOnlyHint.classList.toggle("d-none", !session.stickerOnly);
+    if (ui.stickerOnlyHint) {
+      ui.stickerOnlyHint.classList.toggle("d-none", !session.stickerOnly);
+    }
     const playerTextDisabled = Boolean(session.stickerOnly);
-    ui.playerChatInput.disabled = playerTextDisabled;
-    ui.playerSendChatBtn.disabled = playerTextDisabled;
+    if (ui.playerChatInput) {
+      ui.playerChatInput.disabled = playerTextDisabled;
+    }
+    if (ui.playerSendChatBtn) {
+      ui.playerSendChatBtn.disabled = playerTextDisabled;
+    }
 
     if (state.role === "therapist") {
-      ui.sessionIdDisplay.textContent = session.sessionId || state.sessionId || "-";
-      ui.joinLinkInput.value = session.shortLink || ui.joinLinkInput.value;
-      if (!ui.qrCodeContainer.querySelector("img") && session.shortLink) {
+      setTextIfPresent(ui.sessionIdDisplay, session.sessionId || state.sessionId || "-");
+      if (ui.joinLinkInput) {
+        ui.joinLinkInput.value = session.shortLink || ui.joinLinkInput.value;
+      }
+      if (ui.qrCodeContainer && !ui.qrCodeContainer.querySelector("img") && session.shortLink) {
         drawQrCode(session.shortLink);
       }
     }
 
-    ui.moderatorSessionCode.textContent = session.sessionId || state.sessionId || "-";
+    setTextIfPresent(ui.moderatorSessionCode, session.sessionId || state.sessionId || "-");
     renderChallenge(session.currentChallenge);
     renderMemeOrCertificate();
     renderDebriefState();
@@ -2384,6 +2420,13 @@
       .trim()
       .toLowerCase()
       .replace(/\s+/g, " ");
+  }
+
+  function setTextIfPresent(element, value) {
+    if (!element) {
+      return;
+    }
+    element.textContent = value;
   }
 
   function setProgressBar(element, value, extraClass) {
