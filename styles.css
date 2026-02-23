@@ -159,6 +159,38 @@ body.player-screen {
   text-align: right;
 }
 
+<<<<<<< Updated upstream
+=======
+.boss-sprite {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto;
+  background-image: url("assets/boss-sprite.png");
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  background-repeat: no-repeat;
+  border-radius: 1rem;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+  transition: background-position 0.5s ease;
+}
+
+.boss-sprite-lg {
+  width: 180px;
+  height: 180px;
+}
+
+.boss-sprite[data-phase="1"] { background-position: 0% 0%; }
+.boss-sprite[data-phase="2"] { background-position: 100% 0%; }
+.boss-sprite[data-phase="3"] { background-position: 0% 100%; }
+.boss-sprite[data-phase="4"] { background-position: 100% 100%; }
+
+.answer-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+>>>>>>> Stashed changes
 .answer-option-btn {
   width: 100%;
   min-height: 108px;

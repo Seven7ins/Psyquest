@@ -1021,6 +1021,7 @@
       "copyJoinLinkBtn",
       "teamProgressBar",
       "bossHpBar",
+      "bossImage",
       "roundDisplay",
       "teamLevelDisplay",
       "totalPointsDisplay",
@@ -1060,6 +1061,7 @@
       "playerActionButtons",
       "playerTeamProgressBar",
       "playerBossHpBar",
+      "playerBossImage",
       "playerScoreValue",
       "playerTeamLevelValue",
       "playerBadgesList",
@@ -1074,6 +1076,7 @@
       "moderatorBossName",
       "moderatorTeamProgressBar",
       "moderatorBossHpBar",
+      "moderatorBossImage",
       "moderatorQuestionTitle",
       "moderatorQuestionText",
       "moderatorCorrectAnswer",
@@ -1510,6 +1513,18 @@
     state.unsubscribers = [];
   }
 
+  function bossPhaseFromHp(hp) {
+    if (hp > 75) return "1";
+    if (hp > 50) return "2";
+    if (hp > 25) return "3";
+    return "4";
+  }
+
+  function updateBossImage(el, hp) {
+    if (!el) return;
+    el.dataset.phase = bossPhaseFromHp(hp);
+  }
+
   function renderSession() {
     const session = state.session;
     if (!session) {
@@ -1532,6 +1547,9 @@
     setProgressBar(ui.bossHpBar, bossHp, "bg-danger");
     setProgressBar(ui.playerBossHpBar, bossHp, "bg-danger");
     setProgressBar(ui.moderatorBossHpBar, bossHp, "bg-danger");
+    updateBossImage(ui.bossImage, bossHp);
+    updateBossImage(ui.playerBossImage, bossHp);
+    updateBossImage(ui.moderatorBossImage, bossHp);
     setTextIfPresent(ui.roundDisplay, String(round));
     setTextIfPresent(ui.teamLevelDisplay, String(teamLevel));
     setTextIfPresent(ui.totalPointsDisplay, String(totalPoints));
